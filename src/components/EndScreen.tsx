@@ -1,7 +1,7 @@
 import { getRank, getRandomWisdom, NUM_LEVELS, LEVELS, ENEMY_INFO, ZONE_INFO, WEAPON_INFO } from "@/lib/gameEngine";
 import type { GameState } from "@/hooks/useGameState";
 import ZoneProgress from "./ZoneProgress";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 interface EndScreenProps {
   state: GameState;
@@ -63,10 +63,46 @@ function getDefeatTier(level: number) {
   };
 }
 
+const VICTORY_FRAMES = [
+`  ┌───┐ ┌──────┐
+  │^ ^│ │root@█│
+  │ u │ │$ WIN │
+  └─┬─┘ └──────┘
+  ─/│\\──~
+   / \\`,
+`  ┌───┐ ┌──────┐
+  │' '│ │root@█│
+  │ u │ │$ *** │
+  └─┬─┘ └──────┘
+  \\│/──~
+   / \\`,
+];
+
+const DEFEAT_FRAMES = [
+`  ┌───┐ ┌──────┐
+  │x x│ │root@█│
+  │ ─ │ │$ ERR │
+  └─┬─┘ └──────┘
+  ─/│\\─
+   / \\`,
+`  ┌───┐ ┌──────┐
+  │- -│ │root@█│
+  │ _ │ │$ ... │
+  └─┬─┘ └──────┘
+  ─/│\\─
+   / \\`,
+];
+
 export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps) {
   const wisdom = useMemo(() => getRandomWisdom(), []);
   const rank = getRank(state.level);
   const [expandedZone, setExpandedZone] = useState<number | null>(null);
+  const [artFrame, setArtFrame] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => setArtFrame((f) => (f + 1) % 2), 800);
+    return () => clearInterval(timer);
+  }, []);
 
   // Zones the player breached
   const breachedZones = LEVELS.slice(0, state.level);
@@ -113,6 +149,7 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
               <h1 className="font-pixel text-sm sm:text-base md:text-lg text-primary glow-green leading-relaxed mb-2 sm:mb-3 animate-victory-glow">
                 NETWORK SECURED!
               </h1>
+              <pre className="text-primary/80 text-[10px] sm:text-xs leading-tight font-mono glow-green mx-auto my-3 sm:my-4 enemy-idle">{VICTORY_FRAMES[artFrame]}</pre>
               <p className="font-pixel text-2xl sm:text-3xl md:text-4xl text-accent glow-yellow animate-victory-bounce">
                 VICTORY
               </p>
@@ -139,6 +176,7 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
               <h1 className={`font-pixel text-sm md:text-base ${defeatTier.color} ${defeatTier.glow} leading-relaxed mb-2`}>
                 {defeatTier.label}
               </h1>
+              <pre className={`text-[10px] sm:text-xs leading-tight font-mono mx-auto my-3 ${defeatTier.color} opacity-60`}>{DEFEAT_FRAMES[artFrame]}</pre>
               <p className="font-terminal text-sm text-muted-foreground mt-2">
                 {defeatTier.subtitle}
               </p>
