@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Crosshair, Radar, Bug, Heart, Shield, Skull, Zap, Lock, RefreshCw, Shuffle } from "lucide-react";
 import { NUM_LEVELS, LEVELS, ENEMY_ART, ENEMY_INFO, ZONE_INFO, WEAPON_INFO, DIFFICULTY_MODS } from "@/lib/gameEngine";
 import type { GameState } from "@/hooks/useGameState";
@@ -83,10 +83,18 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
     }
   }, [state.phase, enterZone]);
 
+  // ASCII art frame animation
+  const [artFrame, setArtFrame] = useState(0);
+  useEffect(() => {
+    const interval = setInterval(() => setArtFrame((f) => (f + 1) % 2), 800);
+    return () => clearInterval(interval);
+  }, []);
+
   const isTransition = state.phase === "transition";
   const hpPercent = Math.max(0, (state.playerHP / state.playerMaxHP) * 100);
   const enemyHpPercent = state.enemyMaxHP > 0 ? Math.max(0, (state.enemyHP / state.enemyMaxHP) * 100) : 0;
-  const art = ENEMY_ART[state.enemyName] || "";
+  const artFrames = ENEMY_ART[state.enemyName] || [""];
+  const art = artFrames[artFrame % artFrames.length];
   const nextZone = isTransition && state.level < NUM_LEVELS ? LEVELS[state.level] : null;
 
   const diffLabel = DIFFICULTY_MODS[state.difficulty].label;
@@ -201,7 +209,7 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
 
                 {/* ASCII art enemy */}
                 <div className="flex items-center justify-center h-24 sm:h-32 mb-2 sm:mb-3 bg-cyber-dark border border-border/20 overflow-hidden">
-                  <pre className="text-secondary/80 text-[10px] sm:text-xs leading-tight font-mono glow-pink">{art}</pre>
+                  <pre className="text-secondary/80 text-[10px] sm:text-xs leading-tight font-mono glow-pink enemy-idle">{art}</pre>
                 </div>
 
                 {/* Enemy intel */}

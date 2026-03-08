@@ -244,67 +244,147 @@ export const ZONE_INFO: Record<string, string> = {
   "Core Router": "The backbone of network routing. Compromising it gives an attacker control over all traffic flow.",
 };
 
-// ─── ASCII Art ───────────────────────────────────────────────────────────────
+// ─── ASCII Art (2 frames per enemy for animation) ───────────────────────────
 
-export const ENEMY_ART: Record<string, string> = {
-  "Script Kiddie": `  ┌──────┐
+export const ENEMY_ART: Record<string, string[]> = {
+  "Script Kiddie": [
+`  ┌──────┐
   │ ◉  ◉ │
   │  ──  │
   │ /  \\ │
   └──┬┬──┘
-     ││`,
-  "Trojan": `  ╔══════╗
-  ║ ▓▓▓▓ ║
-  ║ ╠══╣ ║
-  ║ ║  ║ ║
-  ╚══════╝
-   TROJAN`,
-  "Worm": `  ~~~~○○
+  ╔══╧╧══╗`,
+`  ┌──────┐
+  │ ◉  ◉ │
+  │  ──  │
+  │ \\  / │
+  └──┬┬──┘
+  ╔══╧╧══╗`,
+  ],
+  "Trojan": [
+`    ╋
+  ┌─╋──┐
+  │ ╋  │
+  │FREE│
+  │WIFI│
+  └────┘`,
+`    ╋
+  ┌─╋──┐
+  │▓▓▓▓│
+  │▓>>▓│
+  │▓▓▓▓│
+  └────┘`,
+  ],
+  "Worm": [
+`  ~~~~○○
  ○○○○○○○
 ○○○○○○○○○
  ○○○○○○○
   ○○○○○
    ○○○`,
-  "Phisher": `  ┌─────┐
-  │ @  @ │
-  │  <>  │
-  │ /\\/\\ │
-  └──┬┬──┘
-    /🎣\\`,
-  "Ransomware": `  ┌─🔒──┐
+`○○~~~~
+ ○○○○○○○
+  ○○○○○○○○○
+ ○○○○○○○
+○○○○○
+○○○`,
+  ],
+  "Phisher": [
+`  ┌──────┐
+  │ LOGIN │
+  │user:__│
+  │pass:__│
+  │[SUBMIT]│
+  └──────┘`,
+`  ┌──────┐
+  │ LOG1N │
+  │user:__│
+  │pass:__│
+  │[SU8MIT]│
+  └──────┘`,
+  ],
+  "Ransomware": [
+`  ┌─🔒──┐
   │ $$$$ │
   │ LOCK │
   │ $$$$ │
   └──────┘
   PAY UP!`,
-  "Rootkit": `  ┌──────┐
+`  ┌─🔒──┐
+  │ $$$$│
+  │ LOCK │
+  │$$$$  │
+  └──────┘
+  PAY UP!`,
+  ],
+  "Rootkit": [
+`  ┌──────┐
   │ ░░░░ │
   │ ????│
   │ ░░░░ │
   └──────┘
   HIDDEN`,
-  "SQLi Worm": `  ';DROP─┐
+`  ┌──────┐
+  │ ▒▒▒▒ │
+  │ ????│
+  │ ▒▒▒▒ │
+  └──────┘
+  H??DEN`,
+  ],
+  "SQLi Worm": [
+`  ';DROP─┐
   │SELECT│
   │ *FROM│
   │users;│
   └──────┘
   INJECT`,
-  "Zero-Day": `  ╔═0DAY═╗
+`  ';DROP─┐
+  │SELECT│
+  │ *FROM│
+  │pass; │
+  └──────┘
+  INJECT`,
+  ],
+  "Zero-Day": [
+`  ╔═0DAY═╗
   ║ !??! ║
   ║ ?!!? ║
   ║ !??! ║
   ╚══════╝
   UNKNOWN`,
-  "Social Eng": `  ┌──────┐
+`  ╔═0DAY═╗
+  ║ ?!!? ║
+  ║ !??! ║
+  ║ ?!!? ║
+  ╚══════╝
+  UNKN0WN`,
+  ],
+  "Social Eng": [
+`  ┌──────┐
   │ ^  ^ │
   │  ◡◡  │
   │TRUST │
   │  ME  │
   └──────┘`,
-  "APT": `  ╔══════╗
+`  ┌──────┐
+  │ ◠  ◠ │
+  │  ◡◡  │
+  │TRUST │
+  │  ME? │
+  └──────┘`,
+  ],
+  "APT": [
+`  ╔══════╗
   ║▓▓▓▓▓▓║
   ║▓ APT▓║
   ║▓▓▓▓▓▓║
   ╚══════╝
   PERSIST`,
+`  ╔══════╗
+  ║░▓░▓░▓║
+  ║▓ APT░║
+  ║▓░▓░▓░║
+  ╚══════╝
+  PERSIST`,
+  ],
 };
