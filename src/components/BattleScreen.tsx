@@ -108,7 +108,7 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
         {/* Zone header */}
         <div className="bg-card pixel-border p-2 sm:p-3 flex items-center justify-between gap-2">
           <div className="min-w-0 flex-1">
-            <p className="text-[10px] sm:text-xs font-pixel text-muted-foreground tracking-wider">
+            <p className="text-xs sm:text-sm font-pixel text-muted-foreground tracking-wider">
               ZONE {isTransition ? state.level : state.level + 1}/{NUM_LEVELS}
               {state.difficulty !== "normal" && (
                 <span className={`ml-2 ${state.difficulty === "easy" ? "text-primary" : "text-destructive"}`}>
@@ -116,11 +116,11 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
                 </span>
               )}
             </p>
-            <h2 className="font-pixel text-[10px] sm:text-xs text-primary glow-green mt-1 truncate">
+            <h2 className="font-pixel text-xs sm:text-sm text-primary glow-green mt-1 truncate">
               {isTransition ? "ZONE CLEARED" : state.zoneName}
             </h2>
             {!isTransition && ZONE_INFO[state.zoneName] && (
-              <p className="hidden sm:block text-xs font-terminal text-muted-foreground/70 mt-1 leading-snug">
+              <p className="hidden sm:block text-sm font-terminal text-muted-foreground/70 mt-1 leading-snug">
                 {ZONE_INFO[state.zoneName]}
               </p>
             )}
@@ -157,13 +157,13 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
             {isTransition ? (
               <>
                 {/* Loot acquired */}
-                <div className="font-pixel text-xs text-primary glow-green mb-3 pb-2 border-b border-primary/20 tracking-wider">
+                <div className="font-pixel text-xs sm:text-sm text-primary glow-green mb-3 pb-2 border-b border-primary/20 tracking-wider">
                   ◈ ZONE {state.level} CLEARED ◈
                 </div>
                 <div className="space-y-2 mb-4">
-                  <p className="font-pixel text-[11px] text-primary/80 tracking-wider">LOOT ACQUIRED</p>
+                  <p className="font-pixel text-xs sm:text-sm text-primary/80 tracking-wider">LOOT ACQUIRED</p>
                   {state.lootLog.map((msg, i) => (
-                    <p key={i} className="text-green-400 font-terminal text-sm animate-slide-up" style={{ animationDelay: `${i * 150}ms` }}>
+                    <p key={i} className="text-green-400 font-terminal text-sm sm:text-base animate-slide-up" style={{ animationDelay: `${i * 150}ms` }}>
                       {msg}
                     </p>
                   ))}
@@ -172,22 +172,22 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
                 {/* Next zone preview */}
                 {nextZone && (
                   <div className="border-t border-secondary/20 pt-3 space-y-2">
-                    <p className="font-pixel text-xs text-muted-foreground tracking-wider">
+                    <p className="font-pixel text-xs sm:text-sm text-muted-foreground tracking-wider">
                       NEXT: ZONE {state.level + 1}/{NUM_LEVELS}
                     </p>
-                    <h3 className="font-pixel text-sm text-primary glow-green animate-glitch">
+                    <h3 className="font-pixel text-sm sm:text-base text-primary glow-green animate-glitch">
                       {nextZone.zone}
                     </h3>
                     {ZONE_INFO[nextZone.zone] && (
-                      <p className="text-xs font-terminal text-muted-foreground/70 leading-snug">
+                      <p className="text-sm font-terminal text-muted-foreground/70 leading-snug">
                         {ZONE_INFO[nextZone.zone]}
                       </p>
                     )}
-                    <p className="font-terminal text-sm text-secondary glow-pink">
+                    <p className="font-terminal text-sm sm:text-base text-secondary glow-pink">
                       Threat: {nextZone.enemy}
                     </p>
                     {ENEMY_INFO[nextZone.enemy] && (
-                      <p className="text-xs font-terminal text-secondary/70 leading-snug">
+                      <p className="text-sm font-terminal text-secondary/70 leading-snug">
                         {ENEMY_INFO[nextZone.enemy]}
                       </p>
                     )}
@@ -210,10 +210,10 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
               </>
             ) : (
               <>
-                <div className="flex items-center gap-2 font-pixel text-xs text-secondary glow-pink mb-3 pb-2 border-b border-secondary/20">
-                  <Skull className="w-4 h-4" />
+                <div className="flex items-center gap-2 font-pixel text-xs sm:text-sm text-secondary glow-pink mb-3 pb-2 border-b border-secondary/20">
+                  <Skull className="w-4 h-4 sm:w-5 sm:h-5" />
                   <span>THREAT: {state.enemyName}</span>
-                  <span className="ml-auto font-terminal text-[10px] text-secondary/50">ENEMY</span>
+                  <span className="ml-auto font-terminal text-xs text-secondary/50">ENEMY</span>
                 </div>
 
                 {/* ASCII art enemy */}
@@ -224,8 +224,8 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
                 {/* Enemy intel */}
                 {ENEMY_INFO[state.enemyName] && (
                   <div className="hidden sm:block bg-muted/20 px-3 py-2 mb-3 border border-secondary/20">
-                    <p className="text-[11px] font-pixel text-secondary/70 tracking-wider mb-1">THREAT INTEL</p>
-                    <p className="text-xs font-terminal text-muted-foreground leading-snug">
+                    <p className="text-xs sm:text-sm font-pixel text-secondary/70 tracking-wider mb-1">THREAT INTEL</p>
+                    <p className="text-sm font-terminal text-muted-foreground leading-snug">
                       {ENEMY_INFO[state.enemyName]}
                     </p>
                   </div>
@@ -233,7 +233,7 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
 
                 {/* Enemy HP */}
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm font-terminal">
+                  <div className="flex items-center justify-between text-sm sm:text-base font-terminal">
                     <span className="text-muted-foreground">HP</span>
                     <span className="text-secondary glow-pink">{state.enemyHP}/{state.enemyMaxHP}</span>
                   </div>
@@ -249,18 +249,18 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
                     const Icon = info.icon;
                     return (
                       <div className="bg-muted/20 px-3 py-2 border border-secondary/20 space-y-1">
-                        <div className="flex items-center justify-between text-sm font-terminal">
+                        <div className="flex items-center justify-between text-sm sm:text-base font-terminal">
                           <span className="flex items-center gap-1.5 text-secondary">
                             <Icon className="w-3.5 h-3.5" />
                             {info.label}
                           </span>
                           <Zap className="w-3.5 h-3.5 text-secondary/70" />
                         </div>
-                        <p className="text-xs font-terminal text-muted-foreground">{info.desc}</p>
+                        <p className="text-xs sm:text-sm font-terminal text-muted-foreground">{info.desc}</p>
                       </div>
                     );
                   })()}
-                  <div className="flex justify-between bg-muted/20 px-3 py-1 border border-border/20 text-sm font-terminal">
+                  <div className="flex justify-between bg-muted/20 px-3 py-1 border border-border/20 text-sm sm:text-base font-terminal">
                     <span className="text-muted-foreground">ATK PWR:</span>
                     <span className="text-secondary">{state.enemyAtk} per turn</span>
                   </div>
@@ -268,7 +268,7 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
 
                 {/* Hint */}
                 <div className="mt-3 text-center">
-                  <span className="text-accent font-terminal text-sm glow-yellow animate-pulse">
+                  <span className="text-accent font-terminal text-sm sm:text-base glow-yellow animate-pulse">
                     ◈ {state.hintText}
                   </span>
                 </div>
@@ -286,9 +286,9 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
                 type="taken"
                 trigger={state.damageTakenTrigger}
               />
-              <div className="font-pixel text-xs text-cyan-400 glow-blue mb-3 pb-2 border-b border-cyan-400/20 flex items-center justify-between">
+              <div className="font-pixel text-xs sm:text-sm text-cyan-400 glow-blue mb-3 pb-2 border-b border-cyan-400/20 flex items-center justify-between">
                 <span>▶ OPERATOR</span>
-                <span className="font-terminal text-[10px] text-cyan-400/50">YOU</span>
+                <span className="font-terminal text-xs text-cyan-400/50">YOU</span>
               </div>
 
               {/* Operator terminal art */}
@@ -310,8 +310,8 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
 
               {/* HP */}
               <div className="space-y-1 mb-3">
-                <div className="flex items-center gap-2 text-sm font-terminal">
-                  <Heart className="w-4 h-4 text-destructive" />
+                <div className="flex items-center gap-2 text-sm sm:text-base font-terminal">
+                  <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-destructive" />
                   <span className="text-destructive">HP</span>
                   <span className="ml-auto text-destructive glow-red">{state.playerHP}/{state.playerMaxHP}</span>
                 </div>
@@ -325,7 +325,7 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
 
               {/* Shield */}
               {state.shield > 0 && (
-                <div className="flex items-center gap-2 text-sm font-terminal mb-2 text-cyan-400">
+                <div className="flex items-center gap-2 text-sm sm:text-base font-terminal mb-2 text-cyan-400">
                   <Shield className="w-4 h-4" />
                   <span>SHIELD</span>
                   <span className="ml-auto glow-blue">+{state.shield}</span>
@@ -335,7 +335,7 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
 
               {/* Ammo reserves */}
               <div className="space-y-1.5">
-                <div className="text-xs font-pixel text-muted-foreground/80 tracking-wider">AMMO RESERVES</div>
+                <div className="text-xs sm:text-sm font-pixel text-muted-foreground/80 tracking-wider">AMMO RESERVES</div>
                 <div className="grid grid-cols-2 gap-2 text-sm font-terminal">
                   <div className="bg-muted/20 px-3 py-1.5 border border-border/20">
                     <div className="flex justify-between">
@@ -361,20 +361,20 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
               {/* Status effects */}
               {state.weaponEncrypted && (
                 <div className="mt-2 bg-destructive/10 border border-destructive/30 px-3 py-2">
-                  <div className="flex items-center gap-2 font-pixel text-[11px] text-destructive glow-red animate-pulse tracking-wider">
+                  <div className="flex items-center gap-2 font-pixel text-xs sm:text-sm text-destructive glow-red animate-pulse tracking-wider">
                     <Lock className="w-3.5 h-3.5" />
                     WEAPONS ENCRYPTED
                   </div>
-                  <p className="text-xs font-terminal text-destructive/80 mt-1">Next attack deals half damage</p>
+                  <p className="text-xs sm:text-sm font-terminal text-destructive/80 mt-1">Next attack deals half damage</p>
                 </div>
               )}
             </div>
 
             {/* Combat actions */}
             <div className={`bg-card pixel-border-green p-3 sm:p-4 ${!state.locked && !isTransition ? "attack-ready" : ""}`}>
-              <div className="flex items-center justify-between font-pixel text-[10px] sm:text-xs text-primary glow-green mb-2 sm:mb-3 pb-2 border-b border-primary/20">
+              <div className="flex items-center justify-between font-pixel text-xs sm:text-sm text-primary glow-green mb-2 sm:mb-3 pb-2 border-b border-primary/20">
                 <span>{!state.locked && !isTransition ? "▶ SELECT ATTACK" : "▶ ATTACKS"}</span>
-                <span className={`font-terminal text-[10px] sm:text-xs ${!state.locked && !isTransition ? "text-primary glow-green animate-pulse" : "text-muted-foreground"}`}>
+                <span className={`font-terminal text-xs sm:text-sm ${!state.locked && !isTransition ? "text-primary glow-green animate-pulse" : "text-muted-foreground"}`}>
                   {!state.locked && !isTransition ? "TAP OR 1-3" : "2x on weakness!"}
                 </span>
               </div>
@@ -387,7 +387,7 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
                   <span className="hidden sm:inline bg-primary/20 px-1.5 py-0.5 text-[11px] font-pixel border border-primary/30">[1]</span>
                   <Crosshair className="w-4 h-4 shrink-0" />
                   <div className="flex flex-col items-start min-w-0">
-                    <span className="font-terminal text-xs sm:text-sm">PING</span>
+                    <span className="font-terminal text-sm sm:text-base">PING</span>
                     <span className="hidden sm:inline text-[11px] font-terminal text-primary/70">{WEAPON_INFO.ping.fullName}</span>
                   </div>
                   <span className="ml-auto text-[10px] sm:text-[11px] font-pixel text-primary/70 shrink-0">10 DMG</span>
@@ -401,7 +401,7 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
                   <span className="hidden sm:inline bg-secondary/20 px-1.5 py-0.5 text-[11px] font-pixel border border-secondary/30">[2]</span>
                   <Radar className="w-4 h-4 shrink-0" />
                   <div className="flex flex-col items-start min-w-0">
-                    <span className="font-terminal text-xs sm:text-sm">NMAP</span>
+                    <span className="font-terminal text-sm sm:text-base">NMAP</span>
                     <span className="hidden sm:inline text-[11px] font-terminal text-secondary/70">{WEAPON_INFO.nmap.fullName}</span>
                   </div>
                   <div className="ml-auto flex flex-col items-end shrink-0">
@@ -420,7 +420,7 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
                   <span className="hidden sm:inline bg-accent/20 px-1.5 py-0.5 text-[11px] font-pixel border border-accent/30">[3]</span>
                   <Bug className="w-4 h-4 shrink-0" />
                   <div className="flex flex-col items-start min-w-0">
-                    <span className="font-terminal text-xs sm:text-sm">MSPLOIT</span>
+                    <span className="font-terminal text-sm sm:text-base">MSPLOIT</span>
                     <span className="hidden sm:inline text-[11px] font-terminal text-accent/70">{WEAPON_INFO.meta.fullName}</span>
                   </div>
                   <div className="ml-auto flex flex-col items-end shrink-0">
@@ -437,10 +437,10 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
 
         {/* Turn indicator */}
         <div className="flex items-center justify-between px-3 py-1.5 bg-card/50 border border-border/20">
-          <span className="font-terminal text-[11px] text-muted-foreground">
+          <span className="font-terminal text-xs sm:text-sm text-muted-foreground">
             TURN {state.turnCount}
           </span>
-          <span className={`font-pixel text-[11px] tracking-wider ${
+          <span className={`font-pixel text-xs sm:text-sm tracking-wider ${
             isTransition
               ? "text-cyan-400 glow-blue"
               : state.locked
@@ -454,12 +454,12 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
         {/* Operator terminal log */}
         <div className="bg-card pixel-border p-2 sm:p-3">
           <div className="flex items-center justify-between mb-1 sm:mb-2">
-            <span className="text-[10px] sm:text-[11px] font-pixel text-muted-foreground tracking-wider">OPERATOR TERMINAL</span>
-            <span className="text-[10px] font-terminal text-muted-foreground/40">root@cyberslayer ~</span>
+            <span className="text-xs sm:text-sm font-pixel text-muted-foreground tracking-wider">OPERATOR TERMINAL</span>
+            <span className="text-xs sm:text-sm font-terminal text-muted-foreground/40">root@cyberslayer ~</span>
           </div>
           <div
             ref={logRef}
-            className="h-32 sm:h-40 overflow-y-auto space-y-0.5 font-terminal text-xs sm:text-sm scrollbar-thin"
+            className="h-32 sm:h-40 overflow-y-auto space-y-0.5 font-terminal text-sm sm:text-base scrollbar-thin"
           >
             {state.combatLog.map((msg, i) => (
               <p
