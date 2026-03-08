@@ -4,64 +4,65 @@
 
 @layer base {
   :root {
-    --background: 220 20% 6%;
+    --background: 250 30% 5%;
     --foreground: 210 20% 95%;
 
-    --card: 220 18% 10%;
+    --card: 250 25% 8%;
     --card-foreground: 210 20% 95%;
 
-    --popover: 220 18% 10%;
+    --popover: 250 25% 8%;
     --popover-foreground: 210 20% 95%;
 
-    --primary: 142 70% 45%;
-    --primary-foreground: 220 20% 6%;
+    --primary: 330 90% 60%;
+    --primary-foreground: 250 30% 5%;
 
-    --secondary: 220 15% 18%;
-    --secondary-foreground: 210 20% 90%;
+    --secondary: 195 100% 50%;
+    --secondary-foreground: 250 30% 5%;
 
-    --muted: 220 15% 15%;
-    --muted-foreground: 215 15% 55%;
+    --muted: 250 20% 15%;
+    --muted-foreground: 250 15% 55%;
 
-    --accent: 350 80% 55%;
+    --accent: 280 80% 55%;
     --accent-foreground: 210 20% 95%;
 
     --destructive: 0 75% 50%;
     --destructive-foreground: 210 20% 95%;
 
-    --border: 220 15% 20%;
-    --input: 220 15% 18%;
-    --ring: 142 70% 45%;
+    --border: 250 20% 18%;
+    --input: 250 20% 15%;
+    --ring: 330 90% 60%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    /* Custom game tokens */
-    --glow-primary: 142 70% 45%;
-    --glow-accent: 350 80% 55%;
+    /* Custom neon tokens */
+    --neon-pink: 330 90% 60%;
+    --neon-blue: 195 100% 50%;
+    --neon-purple: 280 80% 55%;
     --health: 0 75% 50%;
-    --energy: 200 85% 55%;
-    --xp: 280 70% 55%;
+    --energy: 195 100% 50%;
+    --xp: 280 80% 55%;
   }
 
   .dark {
-    --background: 220 20% 6%;
+    --background: 250 30% 5%;
     --foreground: 210 20% 95%;
-    --card: 220 18% 10%;
+    --card: 250 25% 8%;
     --card-foreground: 210 20% 95%;
-    --popover: 220 18% 10%;
+    --popover: 250 25% 8%;
     --popover-foreground: 210 20% 95%;
-    --primary: 142 70% 45%;
-    --primary-foreground: 220 20% 6%;
-    --secondary: 220 15% 18%;
-    --secondary-foreground: 210 20% 90%;
-    --muted: 220 15% 15%;
-    --muted-foreground: 215 15% 55%;
-    --accent: 350 80% 55%;
+    --primary: 330 90% 60%;
+    --primary-foreground: 250 30% 5%;
+    --secondary: 195 100% 50%;
+    --secondary-foreground: 250 30% 5%;
+    --muted: 250 20% 15%;
+    --muted-foreground: 250 15% 55%;
+    --accent: 280 80% 55%;
     --accent-foreground: 210 20% 95%;
     --destructive: 0 75% 50%;
     --destructive-foreground: 210 20% 95%;
-    --border: 220 15% 20%;
-    --input: 220 15% 18%;
-    --ring: 142 70% 45%;
+    --border: 250 20% 18%;
+    --input: 250 20% 15%;
+    --ring: 330 90% 60%;
   }
 }
 
@@ -76,23 +77,51 @@
 }
 
 @layer utilities {
-  .glow-primary {
-    box-shadow: 0 0 20px hsl(var(--glow-primary) / 0.3),
-                0 0 40px hsl(var(--glow-primary) / 0.1);
+  .neon-glow-pink {
+    box-shadow: 0 0 10px hsl(var(--neon-pink) / 0.5),
+                0 0 30px hsl(var(--neon-pink) / 0.3),
+                0 0 60px hsl(var(--neon-pink) / 0.15);
   }
 
-  .glow-accent {
-    box-shadow: 0 0 20px hsl(var(--glow-accent) / 0.3),
-                0 0 40px hsl(var(--glow-accent) / 0.1);
+  .neon-glow-blue {
+    box-shadow: 0 0 10px hsl(var(--neon-blue) / 0.5),
+                0 0 30px hsl(var(--neon-blue) / 0.3),
+                0 0 60px hsl(var(--neon-blue) / 0.15);
   }
 
-  .text-glow-primary {
-    text-shadow: 0 0 10px hsl(var(--glow-primary) / 0.5),
-                 0 0 20px hsl(var(--glow-primary) / 0.3);
+  .neon-glow-purple {
+    box-shadow: 0 0 10px hsl(var(--neon-purple) / 0.5),
+                0 0 30px hsl(var(--neon-purple) / 0.3),
+                0 0 60px hsl(var(--neon-purple) / 0.15);
   }
 
-  .text-glow-accent {
-    text-shadow: 0 0 10px hsl(var(--glow-accent) / 0.5),
-                 0 0 20px hsl(var(--glow-accent) / 0.3);
+  .text-neon-pink {
+    text-shadow: 0 0 10px hsl(var(--neon-pink) / 0.8),
+                 0 0 30px hsl(var(--neon-pink) / 0.5),
+                 0 0 50px hsl(var(--neon-pink) / 0.3);
+  }
+
+  .text-neon-blue {
+    text-shadow: 0 0 10px hsl(var(--neon-blue) / 0.8),
+                 0 0 30px hsl(var(--neon-blue) / 0.5),
+                 0 0 50px hsl(var(--neon-blue) / 0.3);
+  }
+
+  .text-neon-purple {
+    text-shadow: 0 0 10px hsl(var(--neon-purple) / 0.8),
+                 0 0 30px hsl(var(--neon-purple) / 0.5),
+                 0 0 50px hsl(var(--neon-purple) / 0.3);
+  }
+
+  .border-neon-pink {
+    border-color: hsl(var(--neon-pink));
+    box-shadow: inset 0 0 15px hsl(var(--neon-pink) / 0.1),
+                0 0 15px hsl(var(--neon-pink) / 0.2);
+  }
+
+  .border-neon-blue {
+    border-color: hsl(var(--neon-blue));
+    box-shadow: inset 0 0 15px hsl(var(--neon-blue) / 0.1),
+                0 0 15px hsl(var(--neon-blue) / 0.2);
   }
 }
