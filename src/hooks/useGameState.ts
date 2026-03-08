@@ -8,7 +8,7 @@ import { updateAfterGame } from "@/lib/saveData";
 
 // ─── State ───────────────────────────────────────────────────────────────────
 
-export type Phase = "intro" | "battle" | "end";
+export type Phase = "intro" | "battle" | "transition" | "end";
 
 export interface GameState {
   phase: Phase;
@@ -47,6 +47,8 @@ export interface GameState {
   damageDealtTrigger: number;
   damageTakenTrigger: number;
   screenShake: boolean;
+  // Loot summary (shown during zone transition)
+  lootLog: string[];
 }
 
 // ─── Actions ─────────────────────────────────────────────────────────────────
@@ -55,6 +57,7 @@ type Action =
   | { type: "START_GAME" }
   | { type: "ATTACK"; weapon: Weapon }
   | { type: "UNLOCK" }
+  | { type: "ENTER_ZONE" }
   | { type: "PLAY_AGAIN" }
   | { type: "GO_TO_MENU" };
 
@@ -108,6 +111,7 @@ function gameReducer(state: GameState, action: Action): GameState {
         damageDealtTrigger: 0,
         damageTakenTrigger: 0,
         screenShake: false,
+        lootLog: [],
       };
     }
 
@@ -176,24 +180,21 @@ function gameReducer(state: GameState, action: Action): GameState {
           };
         }
 
-        // Apply loot
+        // Apply loot and go to transition screen
         const loot = applyLoot(state.level);
         const healedHP = Math.min(PLAYER_START_HP, state.playerHP + loot.healAmount);
         const newShield = state.shield + loot.shieldGain;
 
-        log.push(`Healed +${loot.healAmount} HP!`);
-        if (loot.nmapGain > 0) log.push(`+${loot.nmapGain} Nmap ammo`);
-        if (loot.metaGain > 0) log.push(`+${loot.metaGain} Metasploit ammo`);
-        if (loot.shieldGain > 0) log.push(`+${loot.shieldGain} Shield!`);
-
-        // Spawn next enemy
-        const nextEnemy = spawnEnemy(newLevel);
-        log.push(`Entering ${LEVELS[newLevel].zone}...`);
-        log.push(`${LEVELS[newLevel].enemy} appeared!`);
+        const lootMessages: string[] = [];
+        lootMessages.push(`+${loot.healAmount} HP restored`);
+        if (loot.nmapGain > 0) lootMessages.push(`+${loot.nmapGain} Nmap ammo`);
+        if (loot.metaGain > 0) lootMessages.push(`+${loot.metaGain} Metasploit ammo`);
+        if (loot.shieldGain > 0) lootMessages.push(`+${loot.shieldGain} Shield`);
 
         return {
           ...state,
-          ...nextEnemy,
+          phase: "transition",
+          enemyHP: 0,
           level: newLevel,
           kills: newKills,
           playerHP: healedHP,
@@ -210,6 +211,7 @@ function gameReducer(state: GameState, action: Action): GameState {
           damageDealtTrigger: state.damageDealtTrigger + 1,
           damageTakenTrigger: state.damageTakenTrigger,
           screenShake: result.isCrit,
+          lootLog: lootMessages,
         };
       }
 
@@ -277,6 +279,22 @@ function gameReducer(state: GameState, action: Action): GameState {
     case "UNLOCK":
       return { ...state, locked: false, playerHit: false, enemyHit: false, screenShake: false };
 
+    case "ENTER_ZONE": {
+      if (state.phase !== "transition") return state;
+      const nextEnemy = spawnEnemy(state.level);
+      return {
+        ...state,
+        ...nextEnemy,
+        phase: "battle",
+        combatLog: [`Entering ${LEVELS[state.level].zone}...`, `${LEVELS[state.level].enemy} appeared!`],
+        locked: false,
+        playerHit: false,
+        enemyHit: false,
+        screenShake: false,
+        lootLog: [],
+      };
+    }
+
     case "PLAY_AGAIN": {
       const enemy = spawnEnemy(0);
       return {
@@ -300,6 +318,7 @@ function gameReducer(state: GameState, action: Action): GameState {
         damageDealtTrigger: 0,
         damageTakenTrigger: 0,
         screenShake: false,
+        lootLog: [],
       };
     }
 
@@ -343,6 +362,7 @@ const initialState: GameState = {
   damageDealtTrigger: 0,
   damageTakenTrigger: 0,
   screenShake: false,
+  lootLog: [],
 };
 
 // ─── Hook ────────────────────────────────────────────────────────────────────
@@ -375,8 +395,9 @@ export function useGameState() {
   }, []);
 
   const startGame = useCallback(() => dispatch({ type: "START_GAME" }), []);
+  const enterZone = useCallback(() => dispatch({ type: "ENTER_ZONE" }), []);
   const playAgain = useCallback(() => dispatch({ type: "PLAY_AGAIN" }), []);
   const goToMenu = useCallback(() => dispatch({ type: "GO_TO_MENU" }), []);
 
-  return { state, attack, startGame, playAgain, goToMenu };
+  return { state, attack, startGame, enterZone, playAgain, goToMenu };
 }

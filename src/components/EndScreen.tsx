@@ -20,7 +20,7 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
         <div className="bubble px-6 py-8 text-center mb-6">
           {state.victory ? (
             <>
-              <p className="font-pixel text-[10px] text-primary glow-green tracking-widest mb-3">
+              <p className="font-pixel text-xs text-primary glow-green tracking-widest mb-3">
                 ◈ MISSION COMPLETE ◈
               </p>
               <h1 className="font-pixel text-sm md:text-base text-primary glow-green leading-relaxed mb-2">
@@ -32,7 +32,7 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
             </>
           ) : (
             <>
-              <p className="font-pixel text-[10px] text-destructive glow-red tracking-widest mb-3">
+              <p className="font-pixel text-xs text-destructive glow-red tracking-widest mb-3">
                 ◈ MISSION FAILED ◈
               </p>
               <h1 className="font-pixel text-sm md:text-base text-destructive glow-red leading-relaxed mb-2">
@@ -47,7 +47,7 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
 
         {/* Stats */}
         <div className="bg-card pixel-border p-4 space-y-2 mb-6">
-          <div className="font-pixel text-[9px] text-muted-foreground tracking-wider mb-2">
+          <div className="font-pixel text-[11px] text-muted-foreground tracking-wider mb-2">
             DEBRIEF
           </div>
           <div className="flex justify-between bg-muted/20 px-3 py-2 border border-border/20 font-terminal text-sm">
@@ -75,7 +75,7 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
 
         {/* Wisdom */}
         <div className="bg-card pixel-border-blue p-4 text-center mb-6">
-          <p className="font-pixel text-[9px] text-cyan-400/60 tracking-wider mb-2">ORACLE SAYS</p>
+          <p className="font-pixel text-[11px] text-cyan-400/80 tracking-wider mb-2">ORACLE SAYS</p>
           <p className="text-cyan-400 font-terminal text-sm glow-blue italic">"{wisdom}"</p>
         </div>
 

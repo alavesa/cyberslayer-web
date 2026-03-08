@@ -191,6 +191,52 @@ export function applyLoot(level: number): LootResult {
   return { healAmount, nmapGain, metaGain, shieldGain };
 }
 
+// ─── Educational Info ────────────────────────────────────────────────────────
+
+export const WEAPON_INFO: Record<Weapon, { name: string; fullName: string; desc: string }> = {
+  ping: {
+    name: "PING",
+    fullName: "ICMP Echo Request",
+    desc: "Sends ICMP packets to test if a host is reachable. Used for network diagnostics and host discovery.",
+  },
+  nmap: {
+    name: "NMAP",
+    fullName: "Network Mapper",
+    desc: "Open-source port scanner that discovers hosts, services, and vulnerabilities on a network.",
+  },
+  meta: {
+    name: "MSPLOIT",
+    fullName: "Metasploit Framework",
+    desc: "Penetration testing framework with exploit modules for finding and validating vulnerabilities.",
+  },
+};
+
+export const ENEMY_INFO: Record<string, string> = {
+  "Script Kiddie": "An unskilled attacker who uses pre-made tools without understanding how they work.",
+  "Trojan": "Malware disguised as legitimate software. Named after the Trojan Horse — it tricks users into running it.",
+  "Worm": "Self-replicating malware that spreads across networks without user interaction, exploiting vulnerabilities.",
+  "Phisher": "Social engineering attack that uses fake emails or sites to steal credentials and sensitive data.",
+  "Ransomware": "Encrypts victim files and demands payment for decryption keys. A top enterprise threat.",
+  "Rootkit": "Stealthy malware that hides deep in the OS, evading detection while maintaining persistent access.",
+  "SQLi Worm": "Exploits SQL injection flaws — inserting malicious queries to extract or destroy database contents.",
+  "Zero-Day": "An exploit targeting an unknown vulnerability — no patch exists yet. Extremely dangerous.",
+  "Social Eng": "Manipulates people into breaking security procedures. The human element is the weakest link.",
+  "APT": "Advanced Persistent Threat — a prolonged, targeted attack by skilled adversaries, often state-sponsored.",
+};
+
+export const ZONE_INFO: Record<string, string> = {
+  "Guest WiFi": "The entry point. Guest networks should be isolated from internal systems via network segmentation.",
+  "DMZ": "Demilitarized Zone — a network segment that exposes external-facing services while protecting the internal LAN.",
+  "Web Server": "Hosts public applications. Common attack surface for XSS, CSRF, and remote code execution.",
+  "Email GW": "Email Gateway — filters inbound mail for spam, phishing, and malicious attachments before delivery.",
+  "File Server": "Stores shared files. A prime target for ransomware encryption and data exfiltration.",
+  "Active Dir": "Active Directory — Microsoft's identity service. Compromising it means controlling the entire domain.",
+  "Database": "Stores critical data. Must be protected against SQL injection, privilege escalation, and data leaks.",
+  "SCADA": "Supervisory Control and Data Acquisition — controls industrial systems. Attacks here have physical consequences.",
+  "C-Suite": "Executive systems with high-value targets. Social engineering is the primary attack vector here.",
+  "Core Router": "The backbone of network routing. Compromising it gives an attacker control over all traffic flow.",
+};
+
 // ─── ASCII Art ───────────────────────────────────────────────────────────────
 
 export const ENEMY_ART: Record<string, string> = {

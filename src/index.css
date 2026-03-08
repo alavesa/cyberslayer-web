@@ -24,7 +24,7 @@
     --secondary-foreground: 220 25% 8%;
 
     --muted: 220 20% 18%;
-    --muted-foreground: 160 30% 50%;
+    --muted-foreground: 160 30% 60%;
 
     --accent: 50 100% 55%;
     --accent-foreground: 220 25% 8%;
@@ -225,6 +225,30 @@
     opacity: 0.3;
     cursor: not-allowed;
     filter: grayscale(0.6);
+  }
+
+  /* ── Attack ready state ────────────────────────── */
+  .attack-ready {
+    border-color: hsl(var(--cyber-green) / 0.6);
+    box-shadow:
+      0 0 12px hsl(var(--cyber-green) / 0.15),
+      inset 0 0 8px hsl(var(--cyber-green) / 0.05);
+    animation: panel-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes panel-pulse {
+    0%, 100% { box-shadow: 0 0 8px hsl(var(--cyber-green) / 0.1), inset 0 0 6px hsl(var(--cyber-green) / 0.03); }
+    50% { box-shadow: 0 0 16px hsl(var(--cyber-green) / 0.25), inset 0 0 10px hsl(var(--cyber-green) / 0.08); }
+  }
+
+  .attack-btn-pulse:not(:disabled) {
+    animation: btn-glow 1.5s ease-in-out infinite;
+    cursor: pointer;
+  }
+
+  @keyframes btn-glow {
+    0%, 100% { box-shadow: 3px 3px 0 0 hsl(var(--cyber-dark)), inset 1px 1px 0 0 rgba(255,255,255,0.1); }
+    50% { box-shadow: 3px 3px 0 0 hsl(var(--cyber-dark)), inset 1px 1px 0 0 rgba(255,255,255,0.1), 0 0 10px currentColor; }
   }
 
   /* ── Progress bar ───────────────────────────────── */
