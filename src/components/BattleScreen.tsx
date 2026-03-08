@@ -24,9 +24,10 @@ interface BattleScreenProps {
   state: GameState;
   attack: (weapon: Weapon) => void;
   enterZone?: () => void;
+  goToMenu?: () => void;
 }
 
-export default function BattleScreen({ state, attack, enterZone }: BattleScreenProps) {
+export default function BattleScreen({ state, attack, enterZone, goToMenu }: BattleScreenProps) {
   const logRef = useRef<HTMLDivElement>(null);
 
   const prevTriggerRef = useRef(0);
@@ -100,7 +101,16 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
 
   return (
     <div className="min-h-[100dvh] bg-background p-2 sm:p-3 md:p-6 terminal-grid scanlines crt-glow relative overflow-hidden">
-      <div className="fixed top-3 right-3 z-20">
+      <div className="fixed top-3 right-3 z-20 flex items-center gap-2">
+        {goToMenu && (
+          <button
+            onClick={goToMenu}
+            className="px-2 py-1 font-pixel text-xs text-destructive/70 border border-destructive/30 bg-card/80 hover:bg-destructive/20 hover:text-destructive hover:border-destructive/50 transition-all tracking-wider"
+            title="Abort mission"
+          >
+            ABORT
+          </button>
+        )}
         <MuteButton />
       </div>
 

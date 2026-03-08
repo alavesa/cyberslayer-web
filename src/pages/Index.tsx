@@ -161,7 +161,7 @@ export default function Index() {
       return <IntroScreen onStart={startGame} />;
     case "battle":
     case "transition":
-      return <BattleScreen state={state} attack={attack} enterZone={enterZone} />;
+      return <BattleScreen state={state} attack={attack} enterZone={enterZone} goToMenu={goToMenu} />;
     case "end":
       return <EndScreen state={state} playAgain={playAgain} goToMenu={goToMenu} />;
   }
