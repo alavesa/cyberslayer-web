@@ -96,6 +96,16 @@ function IntroScreen({ onStart }: { onStart: (difficulty: Difficulty) => void })
             </span>
           </div>
         </div>
+
+        {/* Credits */}
+        <div className="text-center mt-6 sm:mt-8 font-terminal text-xs text-muted-foreground/50">
+          <span>Built by </span>
+          <a href="https://www.neversay.no" target="_blank" rel="noopener noreferrer" className="text-muted-foreground/70 hover:text-primary transition-colors">Piia</a>
+          <span> with </span>
+          <span className="text-muted-foreground/70">Claude</span>
+          <span> · </span>
+          <a href="https://github.com/alavesa/cyberslayer-web" target="_blank" rel="noopener noreferrer" className="text-muted-foreground/70 hover:text-primary transition-colors">Source</a>
+        </div>
       </div>
     </div>
   );
