@@ -8,9 +8,9 @@ You are an operator infiltrating a corporate network. Each zone contains a threa
 
 | Weapon | Damage | Ammo | Description |
 |--------|--------|------|-------------|
-| **Ping** | 8 | Infinite | ICMP trace — always available |
-| **Nmap** | 15 | Limited | Port scanner — ammo replenished between zones |
-| **Metasploit** | 30 | Rare | Exploit kit — powerful but scarce |
+| **Ping** | 10 | Infinite | ICMP Echo Request — always available |
+| **Nmap** | 18 | Limited | Network Mapper — ammo replenished between zones |
+| **Metasploit** | 32 | Rare | Exploit framework — powerful but scarce |
 
 ### Mechanics
 
@@ -21,6 +21,8 @@ You are an operator infiltrating a corporate network. Each zone contains a threa
   - **Adapt** — Resists repeated use of the same weapon
 - **Shield** — Absorbs incoming damage before HP is affected. Gained between zones.
 - **Loot** — Clearing a zone heals HP and restocks ammo.
+- **Difficulty modes** — Easy, Normal, and Hard adjust player HP and enemy stats.
+- **Speed run tracker** — Best turn count is saved on victory.
 
 ### Controls
 
@@ -30,15 +32,28 @@ You are an operator infiltrating a corporate network. Each zone contains a threa
 | `2` | Nmap |
 | `3` | Metasploit |
 
-Or click the attack buttons.
+Or tap/click the attack buttons. Fully playable on mobile.
 
-## Effects
+### Difficulty Modes
 
+| Mode | Player HP | Enemy HP | Enemy ATK |
+|------|-----------|----------|-----------|
+| Easy | +30% | -25% | -25% |
+| Normal | Standard | Standard | Standard |
+| Hard | -20% | +25% | +25% |
+
+## Features
+
+- Responsive design — mobile (320px+), tablet, and desktop
+- Mute/volume toggle with persistent preference
 - Floating damage numbers on hits
 - Screen shake on critical hits and taking damage
 - Synthesized retro sound effects (Web Audio API — no audio files)
 - CRT scanlines, terminal grid, and glow effects
-- Animated combat log with color-coded messages
+- Scrollable combat log with color-coded messages
+- Per-zone weakness tracking on end screen
+- Tiered defeat screens with cybersecurity tips
+- Educational info about real-world threats and network zones
 
 ## Tech Stack
 
@@ -62,18 +77,19 @@ npm run dev
 ```
 src/
   lib/
-    gameEngine.ts    # Levels, damage calc, enemy turns, loot
-    sounds.ts        # Synthesized retro sound effects
-    saveData.ts      # LocalStorage persistence
+    gameEngine.ts     # Levels, damage calc, enemy turns, loot, difficulty
+    sounds.ts         # Synthesized retro sound effects + mute toggle
+    saveData.ts       # LocalStorage persistence + speed run tracking
   hooks/
-    useGameState.ts  # Game state reducer + keyboard controls
+    useGameState.ts   # Game state reducer + keyboard controls
   components/
     BattleScreen.tsx  # Main combat UI
-    EndScreen.tsx     # Victory/defeat screen
+    EndScreen.tsx     # Victory/defeat screen with intel report
     FloatingDamage.tsx # Animated damage numbers
-    ZoneProgress.tsx  # Zone progress indicator
+    ZoneProgress.tsx  # Zone progress indicator with weakness tracking
+    MuteButton.tsx    # Shared mute/volume toggle
   pages/
-    Index.tsx         # Intro screen + routing between phases
+    Index.tsx         # Intro screen + phase routing
 ```
 
 ## License
