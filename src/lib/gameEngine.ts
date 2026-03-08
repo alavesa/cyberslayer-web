@@ -1,17 +1,24 @@
 // ─── Constants ───────────────────────────────────────────────────────────────
 
-export const PLAYER_START_HP = 100;
+export const PLAYER_START_HP = 120;
 export const NUM_LEVELS = 10;
-export const NMAP_START = 6;
-export const META_START = 2;
-export const DMG_PING = 8;
-export const DMG_NMAP = 15;
-export const DMG_META = 30;
+export const NMAP_START = 8;
+export const META_START = 3;
+export const DMG_PING = 10;
+export const DMG_NMAP = 18;
+export const DMG_META = 32;
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 export type Weapon = "ping" | "nmap" | "meta";
 export type Special = "replicate" | "encrypt" | "adapt" | null;
+export type Difficulty = "easy" | "normal" | "hard";
+
+export const DIFFICULTY_MODS: Record<Difficulty, { playerHP: number; enemyHP: number; enemyAtk: number; label: string }> = {
+  easy:   { playerHP: 1.3, enemyHP: 0.75, enemyAtk: 0.75, label: "EASY" },
+  normal: { playerHP: 1,   enemyHP: 1,    enemyAtk: 1,    label: "NORMAL" },
+  hard:   { playerHP: 0.8, enemyHP: 1.25, enemyAtk: 1.25, label: "HARD" },
+};
 
 export interface LevelData {
   zone: string;
@@ -29,12 +36,12 @@ export const LEVELS: LevelData[] = [
   { zone: "DMZ",           enemy: "Trojan",        hp: 20, atk: 5, special: null,        weakness: "nmap" },
   { zone: "Web Server",    enemy: "Worm",          hp: 25, atk: 4, special: "replicate", weakness: "ping" },
   { zone: "Email GW",      enemy: "Phisher",       hp: 22, atk: 6, special: null,        weakness: "nmap" },
-  { zone: "File Server",   enemy: "Ransomware",    hp: 35, atk: 7, special: "encrypt",  weakness: "meta" },
-  { zone: "Active Dir",    enemy: "Rootkit",       hp: 38, atk: 5, special: null,        weakness: "meta" },
-  { zone: "Database",      enemy: "SQLi Worm",     hp: 32, atk: 6, special: "replicate", weakness: "nmap" },
-  { zone: "SCADA",         enemy: "Zero-Day",      hp: 35, atk: 7, special: null,        weakness: "meta" },
-  { zone: "C-Suite",       enemy: "Social Eng",    hp: 28, atk: 8, special: "encrypt",  weakness: "ping" },
-  { zone: "Core Router",   enemy: "APT",           hp: 55, atk: 8, special: "adapt",    weakness: "meta" },
+  { zone: "File Server",   enemy: "Ransomware",    hp: 30, atk: 6, special: "encrypt",  weakness: "meta" },
+  { zone: "Active Dir",    enemy: "Rootkit",       hp: 34, atk: 5, special: null,        weakness: "meta" },
+  { zone: "Database",      enemy: "SQLi Worm",     hp: 28, atk: 6, special: "replicate", weakness: "nmap" },
+  { zone: "SCADA",         enemy: "Zero-Day",      hp: 32, atk: 6, special: null,        weakness: "meta" },
+  { zone: "C-Suite",       enemy: "Social Eng",    hp: 25, atk: 7, special: "encrypt",  weakness: "ping" },
+  { zone: "Core Router",   enemy: "APT",           hp: 48, atk: 7, special: "adapt",    weakness: "meta" },
 ];
 
 // ─── Ranks ───────────────────────────────────────────────────────────────────
@@ -183,9 +190,9 @@ export interface LootResult {
 
 export function applyLoot(level: number): LootResult {
   // level is 0-indexed (the level just cleared, post-increment)
-  const healAmount = 15 + (level + 1) * 3;
+  const healAmount = 20 + (level + 1) * 3;
   const nmapGain = 2;
-  const metaGain = [2, 4, 7].includes(level) ? 1 : 0;
+  const metaGain = [1, 3, 5, 7].includes(level) ? 1 : 0;
   const shieldGain = [2, 4, 6, 8].includes(level) ? 10 : 0;
 
   return { healAmount, nmapGain, metaGain, shieldGain };

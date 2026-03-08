@@ -66,14 +66,6 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
-        "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
-        },
-        "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
-        },
         "pulse-glow": {
           "0%, 100%": { opacity: "1", boxShadow: "0 0 4px hsl(var(--cyber-green) / 0.4)" },
           "50%": { opacity: "0.7", boxShadow: "0 0 12px hsl(var(--cyber-green) / 0.6)" },
@@ -114,8 +106,6 @@ export default {
         },
       },
       animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
         "damage-flash": "damage-flash 0.4s ease-out",
         "slide-up": "slide-up 0.3s ease-out",

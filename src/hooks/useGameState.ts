@@ -2,7 +2,8 @@ import { useReducer, useCallback, useEffect } from "react";
 import {
   PLAYER_START_HP, NMAP_START, META_START, NUM_LEVELS,
   LEVELS, calculateDamage, enemyTurn, applyLoot, getWeaknessHint,
-  type Weapon, type Special,
+  DIFFICULTY_MODS,
+  type Weapon, type Special, type Difficulty,
 } from "@/lib/gameEngine";
 import { updateAfterGame } from "@/lib/saveData";
 
@@ -12,14 +13,17 @@ export type Phase = "intro" | "battle" | "transition" | "end";
 
 export interface GameState {
   phase: Phase;
+  difficulty: Difficulty;
   // Player
   playerHP: number;
+  playerMaxHP: number;
   shield: number;
   nmapAmmo: number;
   metaAmmo: number;
   // Current level (0-indexed)
   level: number;
   kills: number;
+  totalTurns: number;
   // Enemy
   enemyHP: number;
   enemyMaxHP: number;
@@ -49,12 +53,15 @@ export interface GameState {
   screenShake: boolean;
   // Loot summary (shown during zone transition)
   lootLog: string[];
+  // Per-zone tracking: did player exploit the weakness?
+  zoneCrits: boolean[];
+  usedWeaknessThisZone: boolean;
 }
 
 // ─── Actions ─────────────────────────────────────────────────────────────────
 
 type Action =
-  | { type: "START_GAME" }
+  | { type: "START_GAME"; difficulty: Difficulty }
   | { type: "ATTACK"; weapon: Weapon }
   | { type: "UNLOCK" }
   | { type: "ENTER_ZONE" }
@@ -63,12 +70,15 @@ type Action =
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function spawnEnemy(level: number): Partial<GameState> {
+function spawnEnemy(level: number, difficulty: Difficulty = "normal"): Partial<GameState> {
   const data = LEVELS[level];
+  const mod = DIFFICULTY_MODS[difficulty];
+  const hp = Math.round(data.hp * mod.enemyHP);
+  const atk = Math.round(data.atk * mod.enemyAtk);
   return {
-    enemyHP: data.hp,
-    enemyMaxHP: data.hp,
-    enemyAtk: data.atk,
+    enemyHP: hp,
+    enemyMaxHP: hp,
+    enemyAtk: atk,
     enemyName: data.enemy,
     enemySpecial: data.special,
     enemyWeakness: data.weakness,
@@ -81,7 +91,7 @@ function spawnEnemy(level: number): Partial<GameState> {
 }
 
 function addLog(state: GameState, ...messages: string[]): string[] {
-  return [...state.combatLog, ...messages].slice(-20);
+  return [...state.combatLog, ...messages];
 }
 
 // ─── Reducer ─────────────────────────────────────────────────────────────────
@@ -89,16 +99,22 @@ function addLog(state: GameState, ...messages: string[]): string[] {
 function gameReducer(state: GameState, action: Action): GameState {
   switch (action.type) {
     case "START_GAME": {
-      const enemy = spawnEnemy(0);
+      const diff = action.difficulty;
+      const mod = DIFFICULTY_MODS[diff];
+      const maxHP = Math.round(PLAYER_START_HP * mod.playerHP);
+      const enemy = spawnEnemy(0, diff);
       return {
         ...state,
         phase: "battle",
-        playerHP: PLAYER_START_HP,
+        difficulty: diff,
+        playerHP: maxHP,
+        playerMaxHP: maxHP,
         shield: 0,
         nmapAmmo: NMAP_START,
         metaAmmo: META_START,
         level: 0,
         kills: 0,
+        totalTurns: 0,
         ...enemy,
         combatLog: [`Entering ${LEVELS[0].zone}...`, `${LEVELS[0].enemy} appeared!`],
         victory: false,
@@ -112,6 +128,8 @@ function gameReducer(state: GameState, action: Action): GameState {
         damageTakenTrigger: 0,
         screenShake: false,
         lootLog: [],
+        zoneCrits: [],
+        usedWeaknessThisZone: false,
       };
     }
 
@@ -119,6 +137,7 @@ function gameReducer(state: GameState, action: Action): GameState {
       if (state.locked || state.phase !== "battle") return state;
 
       const { weapon } = action;
+      const newTotalTurns = state.totalTurns + 1;
 
       // Ammo check
       if (weapon === "nmap" && state.nmapAmmo <= 0) {
@@ -147,22 +166,25 @@ function gameReducer(state: GameState, action: Action): GameState {
 
       const newEnemyHP = Math.max(0, state.enemyHP - result.damage);
       const turnCount = state.turnCount + 1;
+      const hitWeakness = state.usedWeaknessThisZone || result.isCrit;
 
       // Enemy killed
       if (newEnemyHP <= 0) {
         const newKills = state.kills + 1;
         const newLevel = state.level + 1;
+        const newZoneCrits = [...state.zoneCrits, hitWeakness];
         log.push(`${state.enemyName} destroyed!`);
 
         // Victory — all 10 zones cleared
         if (newLevel >= NUM_LEVELS) {
-          updateAfterGame(newLevel, newKills);
+          updateAfterGame(newLevel, newKills, newTotalTurns);
           return {
             ...state,
             phase: "end",
             enemyHP: 0,
             kills: newKills,
             level: newLevel,
+            totalTurns: newTotalTurns,
             nmapAmmo, metaAmmo,
             combatLog: addLog(state, ...log, "NETWORK SECURED!"),
             victory: true,
@@ -177,12 +199,14 @@ function gameReducer(state: GameState, action: Action): GameState {
             damageDealtTrigger: state.damageDealtTrigger + 1,
             damageTakenTrigger: state.damageTakenTrigger,
             screenShake: result.isCrit,
+            zoneCrits: newZoneCrits,
+            usedWeaknessThisZone: false,
           };
         }
 
         // Apply loot and go to transition screen
         const loot = applyLoot(state.level);
-        const healedHP = Math.min(PLAYER_START_HP, state.playerHP + loot.healAmount);
+        const healedHP = Math.min(state.playerMaxHP, state.playerHP + loot.healAmount);
         const newShield = state.shield + loot.shieldGain;
 
         const lootMessages: string[] = [];
@@ -197,6 +221,7 @@ function gameReducer(state: GameState, action: Action): GameState {
           enemyHP: 0,
           level: newLevel,
           kills: newKills,
+          totalTurns: newTotalTurns,
           playerHP: healedHP,
           shield: newShield,
           nmapAmmo: nmapAmmo + loot.nmapGain,
@@ -212,6 +237,8 @@ function gameReducer(state: GameState, action: Action): GameState {
           damageTakenTrigger: state.damageTakenTrigger,
           screenShake: result.isCrit,
           lootLog: lootMessages,
+          zoneCrits: newZoneCrits,
+          usedWeaknessThisZone: false,
         };
       }
 
@@ -236,6 +263,7 @@ function gameReducer(state: GameState, action: Action): GameState {
           shield: newShield,
           enemyHP: newEnemyHP,
           nmapAmmo, metaAmmo,
+          totalTurns: newTotalTurns,
           turnCount,
           lastWeapon: weapon,
           weaponEncrypted: eTurn.encrypted,
@@ -251,6 +279,7 @@ function gameReducer(state: GameState, action: Action): GameState {
           damageDealtTrigger: state.damageDealtTrigger + 1,
           damageTakenTrigger: eTurn.hpDamage > 0 ? state.damageTakenTrigger + 1 : state.damageTakenTrigger,
           screenShake: true,
+          usedWeaknessThisZone: hitWeakness,
         };
       }
 
@@ -260,9 +289,10 @@ function gameReducer(state: GameState, action: Action): GameState {
         shield: newShield,
         enemyHP: newEnemyHP,
         nmapAmmo, metaAmmo,
+        totalTurns: newTotalTurns,
         turnCount,
         lastWeapon: weapon,
-        weaponEncrypted: eTurn.encrypted ? true : false,
+        weaponEncrypted: eTurn.encrypted,
         combatLog: addLog(state, ...log),
         locked: true,
         playerHit: eTurn.hpDamage > 0,
@@ -273,6 +303,7 @@ function gameReducer(state: GameState, action: Action): GameState {
         damageDealtTrigger: state.damageDealtTrigger + 1,
         damageTakenTrigger: eTurn.hpDamage > 0 ? state.damageTakenTrigger + 1 : state.damageTakenTrigger,
         screenShake: result.isCrit || eTurn.hpDamage > 0,
+        usedWeaknessThisZone: hitWeakness,
       };
     }
 
@@ -281,7 +312,7 @@ function gameReducer(state: GameState, action: Action): GameState {
 
     case "ENTER_ZONE": {
       if (state.phase !== "transition") return state;
-      const nextEnemy = spawnEnemy(state.level);
+      const nextEnemy = spawnEnemy(state.level, state.difficulty);
       return {
         ...state,
         ...nextEnemy,
@@ -296,16 +327,20 @@ function gameReducer(state: GameState, action: Action): GameState {
     }
 
     case "PLAY_AGAIN": {
-      const enemy = spawnEnemy(0);
+      const mod = DIFFICULTY_MODS[state.difficulty];
+      const maxHP = Math.round(PLAYER_START_HP * mod.playerHP);
+      const enemy = spawnEnemy(0, state.difficulty);
       return {
         ...state,
         phase: "battle",
-        playerHP: PLAYER_START_HP,
+        playerHP: maxHP,
+        playerMaxHP: maxHP,
         shield: 0,
         nmapAmmo: NMAP_START,
         metaAmmo: META_START,
         level: 0,
         kills: 0,
+        totalTurns: 0,
         ...enemy,
         combatLog: [`Entering ${LEVELS[0].zone}...`, `${LEVELS[0].enemy} appeared!`],
         victory: false,
@@ -319,6 +354,8 @@ function gameReducer(state: GameState, action: Action): GameState {
         damageTakenTrigger: 0,
         screenShake: false,
         lootLog: [],
+        zoneCrits: [],
+        usedWeaknessThisZone: false,
       };
     }
 
@@ -334,12 +371,15 @@ function gameReducer(state: GameState, action: Action): GameState {
 
 const initialState: GameState = {
   phase: "intro",
+  difficulty: "normal",
   playerHP: PLAYER_START_HP,
+  playerMaxHP: PLAYER_START_HP,
   shield: 0,
   nmapAmmo: NMAP_START,
   metaAmmo: META_START,
   level: 0,
   kills: 0,
+  totalTurns: 0,
   enemyHP: 0,
   enemyMaxHP: 0,
   enemyAtk: 0,
@@ -363,6 +403,8 @@ const initialState: GameState = {
   damageTakenTrigger: 0,
   screenShake: false,
   lootLog: [],
+  zoneCrits: [],
+  usedWeaknessThisZone: false,
 };
 
 // ─── Hook ────────────────────────────────────────────────────────────────────
@@ -394,7 +436,7 @@ export function useGameState() {
     dispatch({ type: "ATTACK", weapon });
   }, []);
 
-  const startGame = useCallback(() => dispatch({ type: "START_GAME" }), []);
+  const startGame = useCallback((difficulty: Difficulty = "normal") => dispatch({ type: "START_GAME", difficulty }), []);
   const enterZone = useCallback(() => dispatch({ type: "ENTER_ZONE" }), []);
   const playAgain = useCallback(() => dispatch({ type: "PLAY_AGAIN" }), []);
   const goToMenu = useCallback(() => dispatch({ type: "GO_TO_MENU" }), []);

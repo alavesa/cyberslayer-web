@@ -1,23 +1,31 @@
+import { useState } from "react";
 import { useGameState } from "@/hooks/useGameState";
 import { loadSave } from "@/lib/saveData";
-import { getRank } from "@/lib/gameEngine";
+import { getRank, DIFFICULTY_MODS, type Difficulty } from "@/lib/gameEngine";
 import BattleScreen from "@/components/BattleScreen";
 import EndScreen from "@/components/EndScreen";
+import MuteButton from "@/components/MuteButton";
 
-function IntroScreen({ onStart }: { onStart: () => void }) {
+function IntroScreen({ onStart }: { onStart: (difficulty: Difficulty) => void }) {
   const save = loadSave();
   const rank = getRank(save.highLevel);
+  const [difficulty, setDifficulty] = useState<Difficulty>("normal");
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 relative overflow-hidden terminal-grid scanlines crt-glow">
+    <div className="min-h-[100dvh] bg-background flex flex-col items-center justify-center p-3 sm:p-4 relative overflow-hidden terminal-grid scanlines crt-glow">
+      {/* Mute button */}
+      <div className="fixed top-3 right-3 z-20">
+        <MuteButton />
+      </div>
+
       <div className="relative z-10 w-full max-w-md animate-flicker">
         {/* Title */}
-        <div className="bubble px-6 py-8 mb-10 text-center">
-          <h1 className="font-pixel text-2xl md:text-3xl tracking-wider leading-relaxed">
+        <div className="bubble px-4 py-6 sm:px-6 sm:py-8 mb-6 sm:mb-10 text-center">
+          <h1 className="font-pixel text-xl sm:text-2xl md:text-3xl tracking-wider leading-relaxed">
             <span className="text-primary glow-green">CYBER</span>
             <span className="text-secondary glow-pink">SLAYER</span>
           </h1>
-          <p className="text-muted-foreground text-sm mt-4 font-terminal">
+          <p className="text-muted-foreground text-xs sm:text-sm mt-3 sm:mt-4 font-terminal">
             [ BREACH 10 CORPORATE NETWORK ZONES ]
           </p>
         </div>
@@ -43,21 +51,48 @@ function IntroScreen({ onStart }: { onStart: () => void }) {
             <span className="text-muted-foreground font-terminal">MISSIONS:</span>
             <span className="text-foreground font-terminal">{save.games}</span>
           </div>
+          {save.bestTurns > 0 && (
+            <div className="flex justify-between bg-muted/30 px-3 py-2 border border-border/30">
+              <span className="text-muted-foreground font-terminal">BEST RUN:</span>
+              <span className="text-cyan-400 font-terminal glow-blue">{save.bestTurns} turns</span>
+            </div>
+          )}
+        </div>
+
+        {/* Difficulty selector */}
+        <div className="flex gap-2 mb-4">
+          {(["easy", "normal", "hard"] as Difficulty[]).map((d) => (
+            <button
+              key={d}
+              onClick={() => setDifficulty(d)}
+              className={`flex-1 py-2 font-pixel text-[10px] sm:text-[11px] tracking-wider border transition-all ${
+                difficulty === d
+                  ? d === "easy"
+                    ? "bg-primary/20 text-primary border-primary/50 glow-green"
+                    : d === "normal"
+                      ? "bg-accent/20 text-accent border-accent/50 glow-yellow"
+                      : "bg-destructive/20 text-destructive border-destructive/50 glow-red"
+                  : "bg-muted/20 text-muted-foreground border-border/30 hover:border-border/50"
+              }`}
+            >
+              {DIFFICULTY_MODS[d].label}
+            </button>
+          ))}
         </div>
 
         {/* Breach In button */}
         <button
-          onClick={onStart}
-          className="w-full h-16 bg-primary text-primary-foreground pixel-btn text-sm tracking-widest"
+          onClick={() => onStart(difficulty)}
+          className="w-full h-12 sm:h-14 md:h-16 bg-primary text-primary-foreground pixel-btn text-xs sm:text-sm tracking-widest"
         >
           ▶ BREACH IN
         </button>
 
         {/* Controls hint */}
-        <div className="text-center mt-6">
-          <div className="inline-flex gap-1 items-center px-4 py-2 border border-border/30 bg-card/50">
-            <span className="font-terminal text-muted-foreground text-sm">
-              KEYS: [1] PING &nbsp; [2] NMAP &nbsp; [3] MSPLOIT
+        <div className="text-center mt-4 sm:mt-6">
+          <div className="inline-flex gap-1 items-center px-3 sm:px-4 py-2 border border-border/30 bg-card/50">
+            <span className="font-terminal text-muted-foreground text-xs sm:text-sm">
+              [1] PING &nbsp; [2] NMAP &nbsp; [3] MSPLOIT
             </span>
           </div>
         </div>

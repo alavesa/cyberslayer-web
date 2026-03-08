@@ -1,6 +1,17 @@
 // Retro synthesized sound effects using Web Audio API — no audio files needed.
 
 let ctx: AudioContext | null = null;
+let muted = localStorage.getItem("cyberslayer-muted") === "1";
+
+export function isMuted(): boolean {
+  return muted;
+}
+
+export function toggleMute(): boolean {
+  muted = !muted;
+  localStorage.setItem("cyberslayer-muted", muted ? "1" : "0");
+  return muted;
+}
 
 function getCtx(): AudioContext {
   if (!ctx) ctx = new AudioContext();
@@ -14,6 +25,7 @@ function playTone(
   volume = 0.15,
   freqEnd?: number,
 ) {
+  if (muted) return;
   const ac = getCtx();
   const osc = ac.createOscillator();
   const gain = ac.createGain();
@@ -34,6 +46,7 @@ function playTone(
 }
 
 function playNoise(duration: number, volume = 0.08) {
+  if (muted) return;
   const ac = getCtx();
   const bufferSize = ac.sampleRate * duration;
   const buffer = ac.createBuffer(1, bufferSize, ac.sampleRate);
