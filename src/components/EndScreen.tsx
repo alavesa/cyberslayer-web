@@ -76,7 +76,7 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
   const defeatTier = !state.victory ? getDefeatTier(state.level) : null;
 
   return (
-    <div className="min-h-[100dvh] bg-background flex items-center justify-center p-2 sm:p-4 terminal-grid scanlines crt-glow relative overflow-hidden">
+    <div className="min-h-[100dvh] bg-background flex items-start justify-center p-2 sm:p-4 terminal-grid scanlines crt-glow relative">
       {/* Victory particle effects */}
       {state.victory && (
         <div className="fixed inset-0 pointer-events-none z-20 overflow-hidden">
@@ -102,7 +102,7 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
         </div>
       )}
 
-      <div className="relative z-10 w-full max-w-md overflow-y-auto max-h-[100dvh] py-4 sm:py-6 scrollbar-thin">
+      <div className="relative z-10 w-full max-w-md py-4 sm:py-6">
         {/* Result header */}
         <div className={`px-4 py-6 sm:px-6 sm:py-8 text-center mb-4 sm:mb-6 ${state.victory ? 'victory-banner' : defeatTier?.borderClass || 'bubble'}`}>
           {state.victory ? (

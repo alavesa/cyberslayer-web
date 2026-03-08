@@ -55,6 +55,11 @@
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
   body {
     @apply bg-background text-foreground;
     font-family: 'VT323', 'Courier New', monospace;
@@ -63,6 +68,7 @@
     -webkit-font-smoothing: none;
     -moz-osx-font-smoothing: unset;
     overflow-x: hidden;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   }
 
   /* Respect reduced motion preferences */

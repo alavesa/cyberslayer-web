@@ -33,13 +33,13 @@ function IntroScreen({ onStart }: { onStart: (difficulty: Difficulty) => void })
   }, []);
 
   return (
-    <div className="min-h-[100dvh] bg-background flex flex-col items-center justify-center p-3 sm:p-4 relative overflow-hidden terminal-grid scanlines crt-glow">
+    <div className="min-h-[100dvh] bg-background flex flex-col items-center justify-start sm:justify-center p-3 sm:p-4 relative overflow-hidden terminal-grid scanlines crt-glow">
       {/* Mute button */}
       <div className="fixed top-3 right-3 z-20">
         <MuteButton />
       </div>
 
-      <div className="relative z-10 w-full max-w-md animate-flicker">
+      <div className="relative z-10 w-full max-w-md animate-flicker py-4 sm:py-0">
         {/* Title */}
         <div className="bubble px-4 py-6 sm:px-6 sm:py-8 mb-6 sm:mb-10 text-center">
           <h1 className="font-pixel text-xl sm:text-2xl md:text-3xl tracking-wider leading-relaxed">
@@ -47,7 +47,7 @@ function IntroScreen({ onStart }: { onStart: (difficulty: Difficulty) => void })
             <span className="text-secondary glow-pink">SLAYER</span>
           </h1>
           <p className="text-muted-foreground text-xs sm:text-sm mt-3 sm:mt-4 font-terminal">
-            [ BREACH 10 CORPORATE NETWORK ZONES ]
+            [ THE NETWORK IS COMPROMISED — YOU'RE THE CURE ]
           </p>
         </div>
 
@@ -56,13 +56,13 @@ function IntroScreen({ onStart }: { onStart: (difficulty: Difficulty) => void })
           <div className="text-xs font-pixel text-cyan-400/80 mb-3 tracking-wider glow-blue">
             OPERATOR BRIEFING
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
             <div className="flex-shrink-0" aria-hidden="true">
               <pre className="text-cyan-400/70 text-[10px] sm:text-xs leading-tight font-mono glow-blue enemy-idle">
                 {OPERATOR_FRAMES[artFrame]}
               </pre>
             </div>
-            <div className="font-terminal text-sm text-muted-foreground leading-relaxed space-y-2">
+            <div className="font-terminal text-sm text-muted-foreground leading-relaxed space-y-2 text-center sm:text-left">
               <p>You are a <span className="text-cyan-400">network operator</span> tasked with breaching a compromised corporate network.</p>
               <p>Eliminate <span className="text-secondary">10 cyber threats</span> using your arsenal: <span className="text-primary">Ping</span>, <span className="text-accent">Nmap</span>, and <span className="text-destructive">Metasploit</span>.</p>
               <p className="text-muted-foreground/60 text-xs">Exploit each threat's weakness for critical damage.</p>
