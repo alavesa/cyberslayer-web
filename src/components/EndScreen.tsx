@@ -244,6 +244,7 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
             <div key={i} className="mb-2">
               <button
                 onClick={() => setExpandedZone(expandedZone === i ? null : i)}
+                aria-expanded={expandedZone === i}
                 className="w-full text-left bg-muted/20 px-3 py-2 border border-border/20 hover:border-primary/30 transition-colors cursor-pointer group"
               >
                 <div className="flex justify-between items-center">

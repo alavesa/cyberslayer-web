@@ -57,7 +57,7 @@ function IntroScreen({ onStart }: { onStart: (difficulty: Difficulty) => void })
             OPERATOR BRIEFING
           </div>
           <div className="flex items-center gap-4">
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0" aria-hidden="true">
               <pre className="text-cyan-400/70 text-[10px] sm:text-xs leading-tight font-mono glow-blue enemy-idle">
                 {OPERATOR_FRAMES[artFrame]}
               </pre>
@@ -100,10 +100,12 @@ function IntroScreen({ onStart }: { onStart: (difficulty: Difficulty) => void })
         </div>
 
         {/* Difficulty selector */}
-        <div className="flex gap-2 mb-4">
+        <div className="flex gap-2 mb-4" role="radiogroup" aria-label="Difficulty selection">
           {(["easy", "normal", "hard"] as Difficulty[]).map((d) => (
             <button
               key={d}
+              role="radio"
+              aria-checked={difficulty === d}
               onClick={() => setDifficulty(d)}
               className={`flex-1 py-2 font-pixel text-[10px] sm:text-[11px] tracking-wider border transition-all ${
                 difficulty === d

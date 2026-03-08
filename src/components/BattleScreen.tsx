@@ -217,7 +217,7 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
                 </div>
 
                 {/* ASCII art enemy */}
-                <div className="flex items-center justify-center h-24 sm:h-32 mb-2 sm:mb-3 bg-cyber-dark border border-border/20 overflow-hidden">
+                <div className="flex items-center justify-center h-24 sm:h-32 mb-2 sm:mb-3 bg-cyber-dark border border-border/20 overflow-hidden" aria-hidden="true">
                   <pre className="text-secondary/80 text-[10px] sm:text-xs leading-tight font-mono glow-pink enemy-idle">{art}</pre>
                 </div>
 
@@ -237,7 +237,7 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
                     <span className="text-muted-foreground">HP</span>
                     <span className="text-secondary glow-pink">{state.enemyHP}/{state.enemyMaxHP}</span>
                   </div>
-                  <div className="pixel-progress h-4 relative">
+                <div className="pixel-progress h-4 relative" role="progressbar" aria-valuenow={state.enemyHP} aria-valuemin={0} aria-valuemax={state.enemyMaxHP} aria-label={`Enemy health: ${state.enemyHP} of ${state.enemyMaxHP}`}>
                     <div
                       className="h-full bg-secondary pixel-progress-fill transition-all duration-300"
                       style={{ width: `${enemyHpPercent}%` }}
@@ -292,7 +292,7 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
               </div>
 
               {/* Operator terminal art */}
-              <div className="flex items-center justify-center h-24 sm:h-32 mb-3 bg-cyber-dark border border-border/20 overflow-hidden">
+              <div className="flex items-center justify-center h-24 sm:h-32 mb-3 bg-cyber-dark border border-border/20 overflow-hidden" aria-hidden="true">
                 <pre className="text-cyan-400/70 text-[10px] sm:text-xs leading-tight font-mono glow-blue enemy-idle">{artFrame === 0
 ? `  ┌───┐ ┌──────┐
   │° °│ │root@█│
@@ -315,7 +315,7 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
                   <span className="text-destructive">HP</span>
                   <span className="ml-auto text-destructive glow-red">{state.playerHP}/{state.playerMaxHP}</span>
                 </div>
-                <div className="pixel-progress h-4 relative">
+              <div className="pixel-progress h-4 relative" role="progressbar" aria-valuenow={state.playerHP} aria-valuemin={0} aria-valuemax={state.playerMaxHP} aria-label={`Player health: ${state.playerHP} of ${state.playerMaxHP}`}>
                   <div
                     className="h-full bg-destructive pixel-progress-fill transition-all duration-300"
                     style={{ width: `${hpPercent}%` }}
@@ -459,6 +459,9 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
           </div>
           <div
             ref={logRef}
+            role="log"
+            aria-live="polite"
+            aria-label="Combat log"
             className="h-32 sm:h-40 overflow-y-auto space-y-0.5 font-terminal text-xs sm:text-sm scrollbar-thin"
           >
             {state.combatLog.map((msg, i) => (
