@@ -1,73 +1,81 @@
-# Welcome to your Lovable project
+# CyberSlayer
 
-## Project info
+A turn-based cybersecurity combat game built for the browser. Breach 10 corporate network zones, exploit enemy weaknesses, and secure the network.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## Gameplay
 
-## How can I edit this code?
+You are an operator infiltrating a corporate network. Each zone contains a threat — from Script Kiddies to Advanced Persistent Threats. Choose your attacks wisely:
 
-There are several ways of editing your application.
+| Weapon | Damage | Ammo | Description |
+|--------|--------|------|-------------|
+| **Ping** | 8 | Infinite | ICMP trace — always available |
+| **Nmap** | 15 | Limited | Port scanner — ammo replenished between zones |
+| **Metasploit** | 30 | Rare | Exploit kit — powerful but scarce |
 
-**Use Lovable**
+### Mechanics
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+- **Weakness system** — Each enemy is weak to one weapon. Hitting the weakness deals 2x damage (shown as a critical hit).
+- **Enemy specials** — Some enemies have abilities:
+  - **Replicate** — 1.5x attack damage every 3rd turn
+  - **Encrypt** — Halves your damage every 2nd turn
+  - **Adapt** — Resists repeated use of the same weapon
+- **Shield** — Absorbs incoming damage before HP is affected. Gained between zones.
+- **Loot** — Clearing a zone heals HP and restocks ammo.
 
-Changes made via Lovable will be committed automatically to this repo.
+### Controls
 
-**Use your preferred IDE**
+| Key | Action |
+|-----|--------|
+| `1` | Ping |
+| `2` | Nmap |
+| `3` | Metasploit |
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Or click the attack buttons.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## Effects
 
-Follow these steps:
+- Floating damage numbers on hits
+- Screen shake on critical hits and taking damage
+- Synthesized retro sound effects (Web Audio API — no audio files)
+- CRT scanlines, terminal grid, and glow effects
+- Animated combat log with color-coded messages
+
+## Tech Stack
+
+- React 18 + TypeScript
+- Vite
+- Tailwind CSS
+- Web Audio API (synthesized sounds)
+- LocalStorage (persistent save data)
+
+## Development
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+git clone https://github.com/alavesa/cyberslayer-web.git
+cd cyberslayer-web
+npm install
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Project Structure
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```
+src/
+  lib/
+    gameEngine.ts    # Levels, damage calc, enemy turns, loot
+    sounds.ts        # Synthesized retro sound effects
+    saveData.ts      # LocalStorage persistence
+  hooks/
+    useGameState.ts  # Game state reducer + keyboard controls
+  components/
+    BattleScreen.tsx  # Main combat UI
+    EndScreen.tsx     # Victory/defeat screen
+    FloatingDamage.tsx # Animated damage numbers
+    ZoneProgress.tsx  # Zone progress indicator
+  pages/
+    Index.tsx         # Intro screen + routing between phases
+```
 
-**Use GitHub Codespaces**
+## License
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+MIT

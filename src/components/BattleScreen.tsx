@@ -6,7 +6,7 @@ import type { Weapon, Special } from "@/lib/gameEngine";
 import ZoneProgress from "./ZoneProgress";
 import FloatingDamage from "./FloatingDamage";
 import {
-  playAttackSound, playCritSound, playEnemyHitSound, playEnemyDeathSound,
+  playAttackSound, playCritSound, playEnemyDeathSound,
   playPlayerDamageSound, playLevelUpSound, playDefeatSound, playVictorySound,
 } from "@/lib/sounds";
 

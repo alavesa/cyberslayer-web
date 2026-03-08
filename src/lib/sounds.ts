@@ -66,11 +66,6 @@ export function playCritSound() {
   setTimeout(() => playTone(1000, 0.1, "sawtooth", 0.12), 100);
 }
 
-export function playEnemyHitSound() {
-  playTone(200, 0.12, "sawtooth", 0.1, 80);
-  playNoise(0.06, 0.06);
-}
-
 export function playEnemyDeathSound() {
   playTone(400, 0.08, "square", 0.12);
   setTimeout(() => playTone(300, 0.08, "square", 0.1), 60);
@@ -100,8 +95,4 @@ export function playVictorySound() {
   notes.forEach((freq, i) => {
     setTimeout(() => playTone(freq, 0.15, "square", 0.12), i * 120);
   });
-}
-
-export function playButtonSound() {
-  playTone(660, 0.04, "square", 0.06);
 }
