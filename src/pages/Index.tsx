@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useGameState } from "@/hooks/useGameState";
 import { loadSave } from "@/lib/saveData";
 import { getRank, DIFFICULTY_MODS, type Difficulty } from "@/lib/gameEngine";
@@ -6,10 +6,31 @@ import BattleScreen from "@/components/BattleScreen";
 import EndScreen from "@/components/EndScreen";
 import MuteButton from "@/components/MuteButton";
 
+const OPERATOR_FRAMES = [
+`  ┌───┐ ┌──────┐
+  │° °│ │root@█│
+  │ ─ │ │$ _   │
+  └─┬─┘ └──────┘
+  ─/│\\─
+   / \\`,
+`  ┌───┐ ┌──────┐
+  │° °│ │root@█│
+  │ ▪ │ │$ ▓▓▓ │
+  └─┬─┘ └──────┘
+  ─/│\\──~
+   / \\`,
+];
+
 function IntroScreen({ onStart }: { onStart: (difficulty: Difficulty) => void }) {
   const save = loadSave();
   const rank = getRank(save.highLevel);
   const [difficulty, setDifficulty] = useState<Difficulty>("normal");
+  const [artFrame, setArtFrame] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => setArtFrame((f) => (f + 1) % 2), 800);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <div className="min-h-[100dvh] bg-background flex flex-col items-center justify-center p-3 sm:p-4 relative overflow-hidden terminal-grid scanlines crt-glow">
@@ -28,6 +49,25 @@ function IntroScreen({ onStart }: { onStart: (difficulty: Difficulty) => void })
           <p className="text-muted-foreground text-xs sm:text-sm mt-3 sm:mt-4 font-terminal">
             [ BREACH 10 CORPORATE NETWORK ZONES ]
           </p>
+        </div>
+
+        {/* Operator briefing */}
+        <div className="bg-card pixel-border p-4 mb-6">
+          <div className="text-xs font-pixel text-cyan-400/80 mb-3 tracking-wider glow-blue">
+            OPERATOR BRIEFING
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="flex-shrink-0">
+              <pre className="text-cyan-400/70 text-[10px] sm:text-xs leading-tight font-mono glow-blue enemy-idle">
+                {OPERATOR_FRAMES[artFrame]}
+              </pre>
+            </div>
+            <div className="font-terminal text-sm text-muted-foreground leading-relaxed space-y-2">
+              <p>You are a <span className="text-cyan-400">network operator</span> tasked with breaching a compromised corporate network.</p>
+              <p>Eliminate <span className="text-secondary">10 cyber threats</span> using your arsenal: <span className="text-primary">Ping</span>, <span className="text-accent">Nmap</span>, and <span className="text-destructive">Metasploit</span>.</p>
+              <p className="text-muted-foreground/60 text-xs">Exploit each threat's weakness for critical damage.</p>
+            </div>
+          </div>
         </div>
 
         {/* Stats panel */}

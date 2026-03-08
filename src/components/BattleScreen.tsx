@@ -47,7 +47,6 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
       if (state.victory) {
         playVictorySound();
       } else if (state.phase === "end") {
-        // Player also died (shouldn't happen but safety)
         playDefeatSound();
       } else {
         playEnemyDeathSound();
@@ -135,9 +134,18 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
           />
         </div>
 
-        {/* Main battle area */}
-        <div className="grid md:grid-cols-2 gap-2 sm:gap-3">
-          {/* Enemy card / Transition info */}
+        {/* Main battle area — always 2-column on desktop */}
+        <div className="grid md:grid-cols-2 gap-2 sm:gap-3 relative">
+          {/* VS badge — desktop only, during battle */}
+          {!isTransition && (
+            <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+              <div className="bg-background border border-accent/40 px-2 py-1 font-pixel text-xs text-accent glow-yellow">
+                VS
+              </div>
+            </div>
+          )}
+
+          {/* Left: Enemy card / Transition info */}
           <div className={`bg-card pixel-border-pink p-3 sm:p-4 relative ${state.enemyHit ? "animate-damage-flash" : ""}`}>
             <FloatingDamage
               damage={state.lastDamageDealt}
@@ -204,7 +212,8 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
               <>
                 <div className="flex items-center gap-2 font-pixel text-xs text-secondary glow-pink mb-3 pb-2 border-b border-secondary/20">
                   <Skull className="w-4 h-4" />
-                  <span>{state.enemyName}</span>
+                  <span>THREAT: {state.enemyName}</span>
+                  <span className="ml-auto font-terminal text-[10px] text-secondary/50">ENEMY</span>
                 </div>
 
                 {/* ASCII art enemy */}
@@ -267,7 +276,7 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
             )}
           </div>
 
-          {/* Player stats + actions */}
+          {/* Right: Player stats + actions */}
           <div className="space-y-2 sm:space-y-3">
             {/* Player stats */}
             <div className={`bg-card pixel-border-blue p-3 sm:p-4 relative ${state.playerHit ? "animate-damage-flash" : ""}`}>
@@ -277,8 +286,26 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
                 type="taken"
                 trigger={state.damageTakenTrigger}
               />
-              <div className="font-pixel text-xs text-cyan-400 glow-blue mb-3 pb-2 border-b border-cyan-400/20">
-                ▶ OPERATOR
+              <div className="font-pixel text-xs text-cyan-400 glow-blue mb-3 pb-2 border-b border-cyan-400/20 flex items-center justify-between">
+                <span>▶ OPERATOR</span>
+                <span className="font-terminal text-[10px] text-cyan-400/50">YOU</span>
+              </div>
+
+              {/* Operator terminal art */}
+              <div className="flex items-center justify-center h-24 sm:h-32 mb-3 bg-cyber-dark border border-border/20 overflow-hidden">
+                <pre className="text-cyan-400/70 text-[10px] sm:text-xs leading-tight font-mono glow-blue enemy-idle">{artFrame === 0
+? `  ┌───┐ ┌──────┐
+  │° °│ │root@█│
+  │ ─ │ │$ _   │
+  └─┬─┘ └──────┘
+  ─/│\\─
+   / \\`
+: `  ┌───┐ ┌──────┐
+  │° °│ │root@█│
+  │ ▪ │ │$ ▓▓▓ │
+  └─┬─┘ └──────┘
+  ─/│\\──~
+   / \\`}</pre>
               </div>
 
               {/* HP */}
@@ -424,10 +451,11 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
           </span>
         </div>
 
-        {/* System log — full history below the battle */}
+        {/* Operator terminal log */}
         <div className="bg-card pixel-border p-2 sm:p-3">
           <div className="flex items-center justify-between mb-1 sm:mb-2">
-            <span className="text-[10px] sm:text-[11px] font-pixel text-muted-foreground tracking-wider">SYSTEM LOG</span>
+            <span className="text-[10px] sm:text-[11px] font-pixel text-muted-foreground tracking-wider">OPERATOR TERMINAL</span>
+            <span className="text-[10px] font-terminal text-muted-foreground/40">root@cyberslayer ~</span>
           </div>
           <div
             ref={logRef}
@@ -447,7 +475,7 @@ export default function BattleScreen({ state, attack, enterZone }: BattleScreenP
                   "text-muted-foreground"
                 }`}
               >
-                <span className="text-muted-foreground/70">{">"}</span> {msg}
+                <span className="text-cyan-400/40">$</span> {msg}
               </p>
             ))}
           </div>

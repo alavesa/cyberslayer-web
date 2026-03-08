@@ -1,6 +1,6 @@
 // ─── Constants ───────────────────────────────────────────────────────────────
 
-export const PLAYER_START_HP = 120;
+export const PLAYER_START_HP = 100;
 export const NUM_LEVELS = 10;
 export const NMAP_START = 8;
 export const META_START = 3;
@@ -32,16 +32,16 @@ export interface LevelData {
 // ─── Level Data ──────────────────────────────────────────────────────────────
 
 export const LEVELS: LevelData[] = [
-  { zone: "Guest WiFi",    enemy: "Script Kiddie", hp: 12, atk: 3, special: null,        weakness: "ping" },
-  { zone: "DMZ",           enemy: "Trojan",        hp: 20, atk: 5, special: null,        weakness: "nmap" },
-  { zone: "Web Server",    enemy: "Worm",          hp: 25, atk: 4, special: "replicate", weakness: "ping" },
-  { zone: "Email GW",      enemy: "Phisher",       hp: 22, atk: 6, special: null,        weakness: "nmap" },
-  { zone: "File Server",   enemy: "Ransomware",    hp: 30, atk: 6, special: "encrypt",  weakness: "meta" },
-  { zone: "Active Dir",    enemy: "Rootkit",       hp: 34, atk: 5, special: null,        weakness: "meta" },
-  { zone: "Database",      enemy: "SQLi Worm",     hp: 28, atk: 6, special: "replicate", weakness: "nmap" },
-  { zone: "SCADA",         enemy: "Zero-Day",      hp: 32, atk: 6, special: null,        weakness: "meta" },
-  { zone: "C-Suite",       enemy: "Social Eng",    hp: 25, atk: 7, special: "encrypt",  weakness: "ping" },
-  { zone: "Core Router",   enemy: "APT",           hp: 48, atk: 7, special: "adapt",    weakness: "meta" },
+  { zone: "Guest WiFi",    enemy: "Script Kiddie", hp: 18, atk: 5,  special: null,        weakness: "ping" },
+  { zone: "DMZ",           enemy: "Trojan",        hp: 28, atk: 7,  special: null,        weakness: "nmap" },
+  { zone: "Web Server",    enemy: "Worm",          hp: 32, atk: 6,  special: "replicate", weakness: "ping" },
+  { zone: "Email GW",      enemy: "Phisher",       hp: 30, atk: 8,  special: null,        weakness: "nmap" },
+  { zone: "File Server",   enemy: "Ransomware",    hp: 38, atk: 8,  special: "encrypt",  weakness: "meta" },
+  { zone: "Active Dir",    enemy: "Rootkit",       hp: 42, atk: 7,  special: null,        weakness: "meta" },
+  { zone: "Database",      enemy: "SQLi Worm",     hp: 36, atk: 8,  special: "replicate", weakness: "nmap" },
+  { zone: "SCADA",         enemy: "Zero-Day",      hp: 40, atk: 9,  special: null,        weakness: "meta" },
+  { zone: "C-Suite",       enemy: "Social Eng",    hp: 34, atk: 10, special: "encrypt",  weakness: "ping" },
+  { zone: "Core Router",   enemy: "APT",           hp: 58, atk: 10, special: "adapt",    weakness: "meta" },
 ];
 
 // ─── Ranks ───────────────────────────────────────────────────────────────────
