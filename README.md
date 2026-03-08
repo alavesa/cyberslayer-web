@@ -1,6 +1,6 @@
 # CyberSlayer
 
-A turn-based cybersecurity combat game built for the browser. Breach 10 corporate network zones, exploit enemy weaknesses, and secure the network.
+A turn-based cybersecurity combat game built for the browser. Breach 10 corporate network zones, exploit enemy weaknesses, and secure the network. Inspired by the badge game https://github.com/alavesa/cyberslayer
 
 ## Gameplay
 
