@@ -1,71 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    /* Habbo-inspired color palette */
-    --background: 200 60% 85%;
-    --foreground: 220 30% 20%;
+    /* Dark terminal / cyberpunk palette */
+    --background: 220 25% 8%;
+    --foreground: 160 100% 75%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 220 30% 20%;
+    --card: 220 25% 12%;
+    --card-foreground: 160 80% 70%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 30% 20%;
+    --popover: 220 25% 12%;
+    --popover-foreground: 160 80% 70%;
 
-    --primary: 200 80% 45%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 160 100% 50%;
+    --primary-foreground: 220 25% 8%;
 
-    --secondary: 340 70% 55%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 320 100% 60%;
+    --secondary-foreground: 220 25% 8%;
 
-    --muted: 200 30% 75%;
-    --muted-foreground: 220 20% 40%;
+    --muted: 220 20% 18%;
+    --muted-foreground: 160 30% 50%;
 
-    --accent: 45 90% 55%;
-    --accent-foreground: 220 30% 20%;
+    --accent: 50 100% 55%;
+    --accent-foreground: 220 25% 8%;
 
-    --destructive: 0 70% 55%;
+    --destructive: 0 90% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 30% 30%;
-    --input: 200 30% 90%;
-    --ring: 200 80% 45%;
+    --border: 160 60% 25%;
+    --input: 220 20% 18%;
+    --ring: 160 100% 50%;
 
     --radius: 0px;
 
-    /* Habbo tokens */
-    --habbo-blue: 200 80% 45%;
-    --habbo-green: 140 60% 45%;
-    --habbo-pink: 340 70% 55%;
-    --habbo-yellow: 45 90% 55%;
-    --habbo-dark: 220 30% 20%;
-    --health: 0 70% 55%;
-    --energy: 200 80% 45%;
-    --xp: 45 90% 55%;
-  }
-
-  .dark {
-    --background: 220 30% 15%;
-    --foreground: 200 60% 90%;
-    --card: 220 30% 20%;
-    --card-foreground: 200 60% 90%;
-    --popover: 220 30% 20%;
-    --popover-foreground: 200 60% 90%;
-    --primary: 200 80% 50%;
-    --primary-foreground: 220 30% 10%;
-    --secondary: 340 70% 60%;
-    --secondary-foreground: 220 30% 10%;
-    --muted: 220 20% 30%;
-    --muted-foreground: 200 30% 70%;
-    --accent: 45 90% 55%;
-    --accent-foreground: 220 30% 10%;
-    --destructive: 0 70% 55%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 200 40% 40%;
-    --input: 220 20% 25%;
-    --ring: 200 80% 50%;
+    /* Game tokens */
+    --cyber-green: 160 100% 50%;
+    --cyber-pink: 320 100% 60%;
+    --cyber-blue: 200 100% 55%;
+    --cyber-yellow: 50 100% 55%;
+    --cyber-red: 0 90% 55%;
+    --cyber-dark: 220 25% 6%;
+    --cyber-panel: 220 25% 14%;
+    --scanline: 160 100% 50%;
   }
 }
 
@@ -76,144 +57,342 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Courier New', monospace;
+    font-family: 'VT323', 'Courier New', monospace;
+    font-size: 18px;
     image-rendering: pixelated;
+    -webkit-font-smoothing: none;
+    -moz-osx-font-smoothing: unset;
+  }
+
+  /* Pixel font for headings */
+  h1, h2, h3, .pixel-font {
+    font-family: 'Press Start 2P', monospace;
+    letter-spacing: 1px;
+    line-height: 1.4;
   }
 }
 
 @layer utilities {
-  /* Pixel/blocky borders - Habbo style thick borders */
+  /* ── Scanline overlay ────────────────────────────── */
+  .scanlines::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.15) 2px,
+      rgba(0, 0, 0, 0.15) 4px
+    );
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  /* ── CRT screen glow ────────────────────────────── */
+  .crt-glow {
+    box-shadow:
+      0 0 60px hsl(var(--cyber-green) / 0.08),
+      0 0 120px hsl(var(--cyber-green) / 0.04),
+      inset 0 0 80px hsl(var(--cyber-green) / 0.03);
+  }
+
+  /* ── Terminal grid background ────────────────────── */
+  .terminal-grid {
+    background-image:
+      linear-gradient(hsl(var(--cyber-green) / 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--cyber-green) / 0.04) 1px, transparent 1px);
+    background-size: 16px 16px;
+  }
+
+  /* ── Pixel borders ──────────────────────────────── */
   .pixel-border {
-    border: 4px solid hsl(var(--habbo-dark));
-    box-shadow: 
-      4px 4px 0 0 hsl(var(--habbo-dark)),
-      inset 2px 2px 0 0 rgba(255, 255, 255, 0.3);
+    border: 3px solid hsl(var(--cyber-green) / 0.4);
+    box-shadow:
+      3px 3px 0 0 hsl(var(--cyber-dark)),
+      inset 0 0 12px hsl(var(--cyber-green) / 0.05);
   }
 
   .pixel-border-blue {
-    border: 4px solid hsl(var(--habbo-blue));
-    box-shadow: 
-      4px 4px 0 0 hsl(var(--habbo-dark) / 0.5),
-      inset 2px 2px 0 0 rgba(255, 255, 255, 0.4);
+    border: 3px solid hsl(var(--cyber-blue) / 0.6);
+    box-shadow:
+      3px 3px 0 0 hsl(var(--cyber-dark)),
+      inset 0 0 12px hsl(var(--cyber-blue) / 0.05);
   }
 
   .pixel-border-pink {
-    border: 4px solid hsl(var(--habbo-pink));
-    box-shadow: 
-      4px 4px 0 0 hsl(var(--habbo-dark) / 0.5),
-      inset 2px 2px 0 0 rgba(255, 255, 255, 0.4);
+    border: 3px solid hsl(var(--cyber-pink) / 0.6);
+    box-shadow:
+      3px 3px 0 0 hsl(var(--cyber-dark)),
+      inset 0 0 12px hsl(var(--cyber-pink) / 0.05);
   }
 
   .pixel-border-green {
-    border: 4px solid hsl(var(--habbo-green));
-    box-shadow: 
-      4px 4px 0 0 hsl(var(--habbo-dark) / 0.5),
-      inset 2px 2px 0 0 rgba(255, 255, 255, 0.4);
+    border: 3px solid hsl(var(--cyber-green) / 0.6);
+    box-shadow:
+      3px 3px 0 0 hsl(var(--cyber-dark)),
+      inset 0 0 12px hsl(var(--cyber-green) / 0.05);
   }
 
-  /* Isometric panel effect */
+  .pixel-border-yellow {
+    border: 3px solid hsl(var(--cyber-yellow) / 0.6);
+    box-shadow:
+      3px 3px 0 0 hsl(var(--cyber-dark)),
+      inset 0 0 12px hsl(var(--cyber-yellow) / 0.05);
+  }
+
+  /* ── Panel styles ───────────────────────────────── */
   .isometric-panel {
-    transform: perspective(500px) rotateX(2deg);
-    box-shadow: 
-      0 8px 0 -2px hsl(var(--habbo-dark) / 0.3),
-      0 16px 0 -4px hsl(var(--habbo-dark) / 0.15);
+    transform: perspective(500px) rotateX(1deg);
+    box-shadow:
+      0 6px 0 -2px hsl(var(--cyber-dark)),
+      0 12px 0 -4px hsl(var(--cyber-dark) / 0.5);
   }
 
   .isometric-lift {
-    transform: translateY(-2px);
-    transition: transform 0.1s ease;
+    transform: translateY(0);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
 
   .isometric-lift:hover {
-    transform: translateY(-6px);
+    transform: translateY(-4px);
   }
 
-  /* Bubble/chat styling */
+  /* ── Terminal bubble ────────────────────────────── */
   .bubble {
     background: hsl(var(--card));
-    border: 3px solid hsl(var(--habbo-dark));
-    border-radius: 20px;
+    border: 3px solid hsl(var(--cyber-green) / 0.5);
     position: relative;
-    box-shadow: 3px 3px 0 0 hsl(var(--habbo-dark) / 0.3);
+    box-shadow:
+      3px 3px 0 0 hsl(var(--cyber-dark)),
+      0 0 20px hsl(var(--cyber-green) / 0.08);
   }
 
   .bubble::after {
     content: '';
     position: absolute;
-    bottom: -12px;
+    bottom: -10px;
     left: 24px;
     width: 0;
     height: 0;
-    border-left: 12px solid transparent;
-    border-right: 12px solid transparent;
-    border-top: 12px solid hsl(var(--habbo-dark));
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid hsl(var(--cyber-green) / 0.5);
   }
 
   .bubble::before {
     content: '';
     position: absolute;
-    bottom: -8px;
+    bottom: -7px;
     left: 26px;
     width: 0;
     height: 0;
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-    border-top: 10px solid hsl(var(--card));
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid hsl(var(--card));
     z-index: 1;
   }
 
-  /* Pixel button style */
+  /* ── Pixel button ───────────────────────────────── */
   .pixel-btn {
-    border: 3px solid hsl(var(--habbo-dark));
-    box-shadow: 
-      3px 3px 0 0 hsl(var(--habbo-dark)),
-      inset 2px 2px 0 0 rgba(255, 255, 255, 0.3),
-      inset -2px -2px 0 0 rgba(0, 0, 0, 0.1);
-    transition: all 0.1s ease;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    border: 3px solid hsl(var(--cyber-green) / 0.3);
+    box-shadow:
+      3px 3px 0 0 hsl(var(--cyber-dark)),
+      inset 1px 1px 0 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.08s ease;
+    text-transform: uppercase;
+    cursor: pointer;
   }
 
-  .pixel-btn:hover {
+  .pixel-btn:hover:not(:disabled) {
     transform: translate(2px, 2px);
-    box-shadow: 
-      1px 1px 0 0 hsl(var(--habbo-dark)),
-      inset 2px 2px 0 0 rgba(255, 255, 255, 0.3),
-      inset -2px -2px 0 0 rgba(0, 0, 0, 0.1);
+    box-shadow:
+      1px 1px 0 0 hsl(var(--cyber-dark)),
+      inset 1px 1px 0 0 rgba(255, 255, 255, 0.1);
+    filter: brightness(1.2);
   }
 
-  .pixel-btn:active {
+  .pixel-btn:active:not(:disabled) {
     transform: translate(3px, 3px);
-    box-shadow: 
-      0px 0px 0 0 hsl(var(--habbo-dark)),
-      inset 2px 2px 0 0 rgba(255, 255, 255, 0.3),
-      inset -2px -2px 0 0 rgba(0, 0, 0, 0.1);
+    box-shadow:
+      0 0 0 0 hsl(var(--cyber-dark));
   }
 
-  /* Pixel progress bar */
+  .pixel-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    filter: grayscale(0.6);
+  }
+
+  /* ── Progress bar ───────────────────────────────── */
   .pixel-progress {
-    border: 3px solid hsl(var(--habbo-dark));
-    background: hsl(var(--muted));
-    box-shadow: inset 2px 2px 0 0 rgba(0, 0, 0, 0.2);
+    border: 2px solid hsl(var(--cyber-green) / 0.3);
+    background: hsl(var(--cyber-dark));
+    box-shadow: inset 1px 1px 4px rgba(0, 0, 0, 0.5);
   }
 
   .pixel-progress-fill {
-    box-shadow: inset 2px 2px 0 0 rgba(255, 255, 255, 0.4);
+    box-shadow: inset 1px 1px 0 0 rgba(255, 255, 255, 0.2);
+    position: relative;
   }
 
-  /* Grid pattern background */
+  /* Segmented fill for pixel look */
+  .pixel-progress-fill::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 6px,
+      rgba(0, 0, 0, 0.25) 6px,
+      rgba(0, 0, 0, 0.25) 8px
+    );
+  }
+
+  /* ── Glow text ──────────────────────────────────── */
+  .glow-green {
+    text-shadow:
+      0 0 4px hsl(var(--cyber-green) / 0.8),
+      0 0 12px hsl(var(--cyber-green) / 0.4);
+  }
+
+  .glow-pink {
+    text-shadow:
+      0 0 4px hsl(var(--cyber-pink) / 0.8),
+      0 0 12px hsl(var(--cyber-pink) / 0.4);
+  }
+
+  .glow-blue {
+    text-shadow:
+      0 0 4px hsl(var(--cyber-blue) / 0.8),
+      0 0 12px hsl(var(--cyber-blue) / 0.4);
+  }
+
+  .glow-yellow {
+    text-shadow:
+      0 0 4px hsl(var(--cyber-yellow) / 0.8),
+      0 0 12px hsl(var(--cyber-yellow) / 0.4);
+  }
+
+  .glow-red {
+    text-shadow:
+      0 0 4px hsl(var(--cyber-red) / 0.8),
+      0 0 12px hsl(var(--cyber-red) / 0.4);
+  }
+
+  /* ── Blinking cursor ────────────────────────────── */
+  .terminal-cursor::after {
+    content: '█';
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+
+  /* ── Typing effect for combat log ───────────────── */
+  .log-entry {
+    animation: log-appear 0.15s ease-out;
+  }
+
+  @keyframes log-appear {
+    from {
+      opacity: 0;
+      transform: translateX(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  /* ── Corner decoration ──────────────────────────── */
+  .corner-pixel {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    z-index: 50;
+  }
+
+  .corner-pixel::before,
+  .corner-pixel::after {
+    content: '';
+    position: absolute;
+    background: inherit;
+  }
+
+  /* ── Scrollbar ──────────────────────────────────── */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: hsl(var(--cyber-dark));
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: hsl(var(--cyber-green) / 0.3);
+    border: 1px solid hsl(var(--cyber-green) / 0.1);
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--cyber-green) / 0.5);
+  }
+
+  /* ── Floating damage numbers ────────────────────── */
+  .floating-damage {
+    animation: float-up 0.85s ease-out forwards;
+    pointer-events: none;
+    z-index: 50;
+    white-space: nowrap;
+  }
+
+  @keyframes float-up {
+    0% {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0) scale(0.6);
+    }
+    15% {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-10px) scale(1.2);
+    }
+    40% {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-30px) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-70px) scale(0.8);
+    }
+  }
+
+  /* ── Screen shake ─────────────────────────────────── */
+  .screen-shake {
+    animation: screen-shake 0.4s ease-out;
+  }
+
+  @keyframes screen-shake {
+    0%, 100% { transform: translate(0); }
+    10% { transform: translate(-4px, 2px); }
+    20% { transform: translate(4px, -3px); }
+    30% { transform: translate(-3px, 4px); }
+    40% { transform: translate(3px, -2px); }
+    50% { transform: translate(-2px, 3px); }
+    60% { transform: translate(2px, -1px); }
+    70% { transform: translate(-1px, 2px); }
+    80% { transform: translate(1px, -1px); }
+    90% { transform: translate(-1px, 1px); }
+  }
+
+  /* ── Habbo-legacy grid (kept) ───────────────────── */
   .habbo-grid {
-    background-image: 
-      linear-gradient(hsl(var(--habbo-dark) / 0.1) 1px, transparent 1px),
-      linear-gradient(90deg, hsl(var(--habbo-dark) / 0.1) 1px, transparent 1px);
+    background-image:
+      linear-gradient(hsl(var(--cyber-green) / 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--cyber-green) / 0.03) 1px, transparent 1px);
     background-size: 16px 16px;
-  }
-
-  /* Isometric floor tiles */
-  .iso-floor {
-    background: 
-      linear-gradient(135deg, hsl(var(--habbo-green) / 0.3) 25%, transparent 25%),
-      linear-gradient(225deg, hsl(var(--habbo-green) / 0.3) 25%, transparent 25%),
-      linear-gradient(45deg, hsl(var(--habbo-green) / 0.2) 25%, transparent 25%),
-      linear-gradient(315deg, hsl(var(--habbo-green) / 0.2) 25%, hsl(var(--background)) 25%);
-    background-size: 32px 32px;
   }
 }
