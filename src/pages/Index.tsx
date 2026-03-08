@@ -42,70 +42,72 @@ function IntroScreen({ onStart }: { onStart: (difficulty: Difficulty) => void })
       <div className="relative z-10 w-full max-w-md animate-flicker">
         {/* Title */}
         <div className="bubble px-4 py-6 sm:px-6 sm:py-8 mb-6 sm:mb-10 text-center">
-          <h1 className="font-pixel text-2xl sm:text-3xl md:text-4xl tracking-wider leading-relaxed">
+          <h1 className="font-pixel text-xl sm:text-2xl md:text-3xl tracking-wider leading-relaxed">
             <span className="text-primary glow-green">CYBER</span>
             <span className="text-secondary glow-pink">SLAYER</span>
           </h1>
-          <p className="text-muted-foreground text-sm sm:text-base mt-3 sm:mt-4 font-terminal">
+          <p className="text-muted-foreground text-xs sm:text-sm mt-3 sm:mt-4 font-terminal">
             [ BREACH 10 CORPORATE NETWORK ZONES ]
           </p>
         </div>
 
         {/* Operator briefing */}
         <div className="bg-card pixel-border p-4 mb-6">
-          <div className="text-xs sm:text-sm font-pixel text-cyan-400/80 mb-3 tracking-wider glow-blue">
+          <div className="text-xs font-pixel text-cyan-400/80 mb-3 tracking-wider glow-blue">
             OPERATOR BRIEFING
           </div>
           <div className="flex items-center gap-4">
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0" aria-hidden="true">
               <pre className="text-cyan-400/70 text-[10px] sm:text-xs leading-tight font-mono glow-blue enemy-idle">
                 {OPERATOR_FRAMES[artFrame]}
               </pre>
             </div>
-            <div className="font-terminal text-sm sm:text-base text-muted-foreground leading-relaxed space-y-2">
+            <div className="font-terminal text-sm text-muted-foreground leading-relaxed space-y-2">
               <p>You are a <span className="text-cyan-400">network operator</span> tasked with breaching a compromised corporate network.</p>
               <p>Eliminate <span className="text-secondary">10 cyber threats</span> using your arsenal: <span className="text-primary">Ping</span>, <span className="text-accent">Nmap</span>, and <span className="text-destructive">Metasploit</span>.</p>
-              <p className="text-muted-foreground/60 text-xs sm:text-sm">Exploit each threat's weakness for critical damage.</p>
+              <p className="text-muted-foreground/60 text-xs">Exploit each threat's weakness for critical damage.</p>
             </div>
           </div>
         </div>
 
         {/* Stats panel */}
         <div className="bg-card pixel-border p-4 mb-6 space-y-2">
-          <div className="text-xs sm:text-sm font-pixel text-muted-foreground mb-3 tracking-wider">
+          <div className="text-xs font-pixel text-muted-foreground mb-3 tracking-wider">
             OPERATOR STATUS
           </div>
           <div className="flex justify-between bg-muted/30 px-3 py-2 border border-border/30">
-            <span className="text-muted-foreground font-terminal text-sm sm:text-base">RANK:</span>
-            <span className="text-accent font-terminal text-sm sm:text-base glow-yellow">★ {rank} ★</span>
+            <span className="text-muted-foreground font-terminal">RANK:</span>
+            <span className="text-accent font-terminal glow-yellow">★ {rank} ★</span>
           </div>
           <div className="flex justify-between bg-muted/30 px-3 py-2 border border-border/30">
-            <span className="text-muted-foreground font-terminal text-sm sm:text-base">BEST LEVEL:</span>
-            <span className="text-primary font-terminal text-sm sm:text-base glow-green">{save.highLevel}/10</span>
+            <span className="text-muted-foreground font-terminal">BEST LEVEL:</span>
+            <span className="text-primary font-terminal glow-green">{save.highLevel}/10</span>
           </div>
           <div className="flex justify-between bg-muted/30 px-3 py-2 border border-border/30">
-            <span className="text-muted-foreground font-terminal text-sm sm:text-base">TOTAL KILLS:</span>
-            <span className="text-secondary font-terminal text-sm sm:text-base glow-pink">{save.kills}</span>
+            <span className="text-muted-foreground font-terminal">TOTAL KILLS:</span>
+            <span className="text-secondary font-terminal glow-pink">{save.kills}</span>
           </div>
           <div className="flex justify-between bg-muted/30 px-3 py-2 border border-border/30">
-            <span className="text-muted-foreground font-terminal text-sm sm:text-base">MISSIONS:</span>
-            <span className="text-foreground font-terminal text-sm sm:text-base">{save.games}</span>
+            <span className="text-muted-foreground font-terminal">MISSIONS:</span>
+            <span className="text-foreground font-terminal">{save.games}</span>
           </div>
           {save.bestTurns > 0 && (
             <div className="flex justify-between bg-muted/30 px-3 py-2 border border-border/30">
-              <span className="text-muted-foreground font-terminal text-sm sm:text-base">BEST RUN:</span>
-              <span className="text-cyan-400 font-terminal text-sm sm:text-base glow-blue">{save.bestTurns} turns</span>
+              <span className="text-muted-foreground font-terminal">BEST RUN:</span>
+              <span className="text-cyan-400 font-terminal glow-blue">{save.bestTurns} turns</span>
             </div>
           )}
         </div>
 
         {/* Difficulty selector */}
-        <div className="flex gap-2 mb-4">
+        <div className="flex gap-2 mb-4" role="radiogroup" aria-label="Difficulty selection">
           {(["easy", "normal", "hard"] as Difficulty[]).map((d) => (
             <button
               key={d}
+              role="radio"
+              aria-checked={difficulty === d}
               onClick={() => setDifficulty(d)}
-              className={`flex-1 py-2.5 font-pixel text-xs sm:text-sm tracking-wider border transition-all ${
+              className={`flex-1 py-2 font-pixel text-[10px] sm:text-[11px] tracking-wider border transition-all ${
                 difficulty === d
                   ? d === "easy"
                     ? "bg-primary/20 text-primary border-primary/50 glow-green"
@@ -123,7 +125,7 @@ function IntroScreen({ onStart }: { onStart: (difficulty: Difficulty) => void })
         {/* Breach In button */}
         <button
           onClick={() => onStart(difficulty)}
-          className="w-full h-14 sm:h-16 md:h-18 bg-primary text-primary-foreground pixel-btn text-sm sm:text-base tracking-widest"
+          className="w-full h-12 sm:h-14 md:h-16 bg-primary text-primary-foreground pixel-btn text-xs sm:text-sm tracking-widest"
         >
           ▶ BREACH IN
         </button>
@@ -131,7 +133,7 @@ function IntroScreen({ onStart }: { onStart: (difficulty: Difficulty) => void })
         {/* Controls hint */}
         <div className="text-center mt-4 sm:mt-6">
           <div className="inline-flex gap-1 items-center px-3 sm:px-4 py-2 border border-border/30 bg-card/50">
-            <span className="font-terminal text-muted-foreground text-sm sm:text-base">
+            <span className="font-terminal text-muted-foreground text-xs sm:text-sm">
               [1] PING &nbsp; [2] NMAP &nbsp; [3] MSPLOIT
             </span>
           </div>

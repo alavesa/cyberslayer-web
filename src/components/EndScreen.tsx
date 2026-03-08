@@ -107,20 +107,20 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
         <div className={`px-4 py-6 sm:px-6 sm:py-8 text-center mb-4 sm:mb-6 ${state.victory ? 'victory-banner' : defeatTier?.borderClass || 'bubble'}`}>
           {state.victory ? (
             <>
-              <p className="font-pixel text-xs sm:text-sm text-primary glow-green tracking-widest mb-2 sm:mb-3 animate-pulse">
+              <p className="font-pixel text-[10px] sm:text-xs text-primary glow-green tracking-widest mb-2 sm:mb-3 animate-pulse">
                 ◈ ◈ ◈ MISSION COMPLETE ◈ ◈ ◈
               </p>
-              <h1 className="font-pixel text-base sm:text-lg md:text-xl text-primary glow-green leading-relaxed mb-2 sm:mb-3 animate-victory-glow">
+              <h1 className="font-pixel text-sm sm:text-base md:text-lg text-primary glow-green leading-relaxed mb-2 sm:mb-3 animate-victory-glow">
                 NETWORK SECURED!
               </h1>
-              <p className="font-pixel text-3xl sm:text-4xl md:text-5xl text-accent glow-yellow animate-victory-bounce">
+              <p className="font-pixel text-2xl sm:text-3xl md:text-4xl text-accent glow-yellow animate-victory-bounce">
                 VICTORY
               </p>
               <div className="mt-4 flex justify-center gap-1">
                 {['V','I','C','T','O','R','Y'].map((ch, i) => (
                   <span
                     key={i}
-                    className="font-pixel text-sm animate-victory-letter"
+                    className="font-pixel text-xs animate-victory-letter"
                     style={{
                       animationDelay: `${i * 0.1}s`,
                       color: ['hsl(160 100% 50%)', 'hsl(200 100% 55%)', 'hsl(50 100% 55%)', 'hsl(320 100% 60%)'][i % 4],
@@ -133,13 +133,13 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
             </>
           ) : defeatTier && (
             <>
-              <p className={`font-pixel text-sm ${defeatTier.color} ${defeatTier.glow} tracking-widest mb-3`}>
+              <p className={`font-pixel text-xs ${defeatTier.color} ${defeatTier.glow} tracking-widest mb-3`}>
                 {defeatTier.emoji} MISSION FAILED {defeatTier.emoji}
               </p>
-              <h1 className={`font-pixel text-base sm:text-lg ${defeatTier.color} ${defeatTier.glow} leading-relaxed mb-2`}>
+              <h1 className={`font-pixel text-sm md:text-base ${defeatTier.color} ${defeatTier.glow} leading-relaxed mb-2`}>
                 {defeatTier.label}
               </h1>
-              <p className="font-terminal text-sm sm:text-base text-muted-foreground mt-2">
+              <p className="font-terminal text-sm text-muted-foreground mt-2">
                 {defeatTier.subtitle}
               </p>
               {/* Progress visualization */}
@@ -157,7 +157,7 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
                   />
                 ))}
               </div>
-              <p className="font-pixel text-xs sm:text-sm text-muted-foreground mt-2">
+              <p className="font-pixel text-[11px] text-muted-foreground mt-2">
                 {Math.round((state.level / NUM_LEVELS) * 100)}% INFILTRATED
               </p>
             </>
@@ -166,22 +166,22 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
 
         {/* Stats */}
         <div className="bg-card pixel-border p-3 sm:p-4 space-y-2 mb-4 sm:mb-6">
-          <div className="font-pixel text-xs sm:text-sm text-muted-foreground tracking-wider mb-2">
+          <div className="font-pixel text-[11px] text-muted-foreground tracking-wider mb-2">
             DEBRIEF
           </div>
-          <div className="flex justify-between bg-muted/20 px-3 py-2 border border-border/20 font-terminal text-sm sm:text-base">
+          <div className="flex justify-between bg-muted/20 px-3 py-2 border border-border/20 font-terminal text-sm">
             <span className="text-muted-foreground">RANK:</span>
             <span className="text-accent glow-yellow">★ {rank} ★</span>
           </div>
-          <div className="flex justify-between bg-muted/20 px-3 py-2 border border-border/20 font-terminal text-sm sm:text-base">
+          <div className="flex justify-between bg-muted/20 px-3 py-2 border border-border/20 font-terminal text-sm">
             <span className="text-muted-foreground">ZONES BREACHED:</span>
             <span className="text-primary glow-green">{state.level}/{NUM_LEVELS}</span>
           </div>
-          <div className="flex justify-between bg-muted/20 px-3 py-2 border border-border/20 font-terminal text-sm sm:text-base">
+          <div className="flex justify-between bg-muted/20 px-3 py-2 border border-border/20 font-terminal text-sm">
             <span className="text-muted-foreground">THREATS SLAIN:</span>
             <span className="text-secondary glow-pink">{state.kills}</span>
           </div>
-          <div className="flex justify-between bg-muted/20 px-3 py-2 border border-border/20 font-terminal text-sm sm:text-base">
+          <div className="flex justify-between bg-muted/20 px-3 py-2 border border-border/20 font-terminal text-sm">
             <span className="text-muted-foreground">TOTAL TURNS:</span>
             <span className="text-cyan-400 glow-blue">{state.totalTurns}</span>
           </div>
@@ -196,7 +196,7 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
             />
           </div>
           {state.zoneCrits.length > 0 && (
-            <div className="flex items-center justify-center gap-4 pt-2 font-terminal text-xs sm:text-sm">
+            <div className="flex items-center justify-center gap-4 pt-2 font-terminal text-[11px]">
               <span className="flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 bg-primary/60 border border-primary/50 inline-block" />
                 <span className="text-muted-foreground">Weakness used</span>
@@ -213,10 +213,10 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
         <div className="wisdom-panel p-3 sm:p-5 text-center mb-4 sm:mb-6 relative overflow-hidden">
           <div className="absolute inset-0 wisdom-shimmer" />
           <div className="relative z-10">
-            <p className="font-pixel text-xs sm:text-sm text-cyan-300 tracking-widest mb-3">
+            <p className="font-pixel text-[11px] text-cyan-300 tracking-widest mb-3">
               ◇ ORACLE TRANSMISSION ◇
             </p>
-            <p className="text-cyan-300 font-terminal text-base sm:text-lg glow-blue leading-relaxed">
+            <p className="text-cyan-300 font-terminal text-sm sm:text-base glow-blue leading-relaxed">
               "{wisdom}"
             </p>
             <div className="mt-3 flex justify-center gap-1">
@@ -233,10 +233,10 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
 
         {/* Educational: Zone Report */}
         <div className="bg-card pixel-border-green p-3 sm:p-4 mb-4 sm:mb-6">
-          <p className="font-pixel text-xs sm:text-sm text-primary/80 tracking-wider mb-1">
+          <p className="font-pixel text-[11px] text-primary/80 tracking-wider mb-1">
             INTEL REPORT — ZONES BREACHED
           </p>
-          <p className="font-terminal text-xs sm:text-sm text-muted-foreground/70 mb-3">
+          <p className="font-terminal text-xs text-muted-foreground/70 mb-3">
             Tap a zone to learn about real-world threats
           </p>
 
@@ -244,14 +244,15 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
             <div key={i} className="mb-2">
               <button
                 onClick={() => setExpandedZone(expandedZone === i ? null : i)}
+                aria-expanded={expandedZone === i}
                 className="w-full text-left bg-muted/20 px-3 py-2 border border-border/20 hover:border-primary/30 transition-colors cursor-pointer group"
               >
                 <div className="flex justify-between items-center">
-                  <span className="font-terminal text-sm sm:text-base text-primary/90 flex items-center gap-2">
+                  <span className="font-terminal text-sm text-primary/90 flex items-center gap-2">
                     {i + 1}. {lvl.zone}
-                    <span className={`text-xs transition-transform duration-200 ${expandedZone === i ? "rotate-90" : ""} text-primary/50 group-hover:text-primary/80`}>▶</span>
+                    <span className={`text-[11px] transition-transform duration-200 ${expandedZone === i ? "rotate-90" : ""} text-primary/50 group-hover:text-primary/80`}>▶</span>
                   </span>
-                  <span className="font-terminal text-sm sm:text-base text-secondary/80">
+                  <span className="font-terminal text-sm text-secondary/80">
                     vs {lvl.enemy} ✓
                   </span>
                 </div>
@@ -259,20 +260,20 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
               {expandedZone === i && (
                 <div className="bg-muted/10 px-3 py-2 border-x border-b border-border/20 space-y-2 animate-slide-down">
                   <div>
-                    <p className="font-pixel text-xs sm:text-sm text-cyan-400/80 tracking-wider mb-1">ZONE</p>
-                    <p className="font-terminal text-sm sm:text-base text-muted-foreground leading-relaxed">
+                    <p className="font-pixel text-[11px] text-cyan-400/80 tracking-wider mb-1">ZONE</p>
+                    <p className="font-terminal text-sm text-muted-foreground leading-relaxed">
                       {ZONE_INFO[lvl.zone]}
                     </p>
                   </div>
                   <div>
-                    <p className="font-pixel text-xs sm:text-sm text-secondary/80 tracking-wider mb-1">THREAT</p>
-                    <p className="font-terminal text-sm sm:text-base text-muted-foreground leading-relaxed">
+                    <p className="font-pixel text-[11px] text-secondary/80 tracking-wider mb-1">THREAT</p>
+                    <p className="font-terminal text-sm text-muted-foreground leading-relaxed">
                       {ENEMY_INFO[lvl.enemy]}
                     </p>
                   </div>
                   <div>
-                    <p className="font-pixel text-xs sm:text-sm text-accent/80 tracking-wider mb-1">WEAKNESS</p>
-                    <p className="font-terminal text-sm sm:text-base text-muted-foreground">
+                    <p className="font-pixel text-[11px] text-accent/80 tracking-wider mb-1">WEAKNESS</p>
+                    <p className="font-terminal text-sm text-muted-foreground">
                       {WEAPON_INFO[lvl.weakness].name} — {WEAPON_INFO[lvl.weakness].desc}
                     </p>
                   </div>
@@ -286,19 +287,19 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
             <div className="mt-3 border-t border-destructive/30 pt-3">
               <div className="bg-destructive/10 px-3 py-2 border border-destructive/20">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="font-terminal text-sm sm:text-base text-destructive/90">
+                  <span className="font-terminal text-sm text-destructive/90">
                     {state.level + 1}. {failedZone.zone}
                   </span>
-                  <span className="font-terminal text-sm sm:text-base text-destructive/70">
+                  <span className="font-terminal text-sm text-destructive/70">
                     vs {failedZone.enemy} ✗
                   </span>
                 </div>
-                <p className="font-pixel text-xs sm:text-sm text-destructive/60 tracking-wider mb-1">WHAT STOPPED YOU</p>
-                <p className="font-terminal text-sm sm:text-base text-muted-foreground leading-relaxed">
+                <p className="font-pixel text-[11px] text-destructive/60 tracking-wider mb-1">WHAT STOPPED YOU</p>
+                <p className="font-terminal text-sm text-muted-foreground leading-relaxed">
                   {ENEMY_INFO[failedZone.enemy]}
                 </p>
-                <p className="font-pixel text-xs sm:text-sm text-accent/70 tracking-wider mt-2 mb-1">TIP</p>
-                <p className="font-terminal text-sm sm:text-base text-accent/80">
+                <p className="font-pixel text-[11px] text-accent/70 tracking-wider mt-2 mb-1">TIP</p>
+                <p className="font-terminal text-sm text-accent/80">
                   This threat is weak to {WEAPON_INFO[failedZone.weakness].name}. {WEAPON_INFO[failedZone.weakness].desc}
                 </p>
               </div>
@@ -309,10 +310,10 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
         {/* Encouragement (defeat only) */}
         {defeatTier && (
           <div className="bg-card pixel-border-pink p-3 sm:p-4 mb-4 sm:mb-6">
-            <p className="font-pixel text-xs sm:text-sm text-secondary/80 tracking-wider mb-2">
+            <p className="font-pixel text-[11px] text-secondary/80 tracking-wider mb-2">
               TACTICAL ADVICE
             </p>
-            <p className="font-terminal text-sm sm:text-base text-muted-foreground leading-relaxed">
+            <p className="font-terminal text-sm text-muted-foreground leading-relaxed">
               {defeatTier.encouragement}
             </p>
           </div>
@@ -322,13 +323,13 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
         <div className="flex gap-2 sm:gap-3 pb-4">
           <button
             onClick={goToMenu}
-            className="flex-1 h-12 sm:h-16 bg-secondary/20 text-secondary pixel-btn text-sm sm:text-base tracking-widest border-secondary/40"
+            className="flex-1 h-11 sm:h-14 bg-secondary/20 text-secondary pixel-btn tracking-widest border-secondary/40"
           >
             MENU
           </button>
           <button
             onClick={playAgain}
-            className={`flex-1 h-12 sm:h-16 bg-primary/20 text-primary pixel-btn text-sm sm:text-base tracking-widest border-primary/40 ${state.victory ? 'attack-btn-pulse' : ''}`}
+            className={`flex-1 h-11 sm:h-14 bg-primary/20 text-primary pixel-btn tracking-widest border-primary/40 ${state.victory ? 'attack-btn-pulse' : ''}`}
           >
             AGAIN
           </button>
