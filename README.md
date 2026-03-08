@@ -4,7 +4,7 @@ A turn-based cybersecurity combat game built for the browser. Breach 10 corporat
 
 ## Gameplay
 
-You are an operator infiltrating a corporate network. Each zone contains a threat — from Script Kiddies to Advanced Persistent Threats. Choose your attacks wisely:
+You are a **network operator** infiltrating a compromised corporate network. Your mission: breach 10 zones, eliminate the cyber threats within, and secure the network. Each zone contains a progressively more dangerous threat — from Script Kiddies to Advanced Persistent Threats. Choose your attacks wisely:
 
 | Weapon | Damage | Ammo | Description |
 |--------|--------|------|-------------|
@@ -39,11 +39,13 @@ Or tap/click the attack buttons. Fully playable on mobile.
 | Mode | Player HP | Enemy HP | Enemy ATK |
 |------|-----------|----------|-----------|
 | Easy | +30% | -25% | -25% |
-| Normal | Standard | Standard | Standard |
+| Normal | 100 HP | Standard | Standard |
 | Hard | -20% | +25% | +25% |
 
 ## Features
 
+- Operator briefing with animated ASCII art on the intro screen
+- Animated 2-frame ASCII art for all enemies and the operator
 - Responsive design — mobile (320px+), tablet, and desktop
 - Mute/volume toggle with persistent preference
 - Floating damage numbers on hits
@@ -51,8 +53,9 @@ Or tap/click the attack buttons. Fully playable on mobile.
 - Synthesized retro sound effects (Web Audio API — no audio files)
 - CRT scanlines, terminal grid, and glow effects
 - Scrollable combat log with color-coded messages
+- VS badge overlay during battle phase
 - Per-zone weakness tracking on end screen
-- Tiered defeat screens with cybersecurity tips
+- Tiered defeat screens (5 tiers) with cybersecurity tips and tactical advice
 - Educational info about real-world threats and network zones
 
 ## Tech Stack
