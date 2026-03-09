@@ -4,6 +4,9 @@ A turn-based cybersecurity combat game built for the browser. Breach 10 corporat
 
 **Play now: [https://cyberslayer.win/](https://cyberslayer.win/)**
 
+<img width="1909" height="1086" alt="Screenshot 2026-03-09 at 14 54 12" src="https://github.com/user-attachments/assets/6b822363-0c95-4dfa-81a8-62a33275ca5f" />
+
+
 ## Gameplay
 
 You are a **network operator** infiltrating a compromised corporate network. Your mission: breach 10 zones, eliminate the cyber threats within, and secure the network. Each zone contains a progressively more dangerous threat — from Script Kiddies to Advanced Persistent Threats. Choose your attacks wisely:
