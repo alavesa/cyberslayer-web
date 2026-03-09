@@ -557,6 +557,7 @@ export default function BattleScreen({ state, attack, enterZone, goToMenu, runCo
                   onChange={(e) => setCmdInput(e.target.value)}
                   onKeyDown={handleCommand}
                   placeholder='type "help" for commands...'
+                  maxLength={100}
                   className="flex-1 bg-transparent text-xs font-terminal text-muted-foreground outline-none placeholder:text-muted-foreground/30 caret-primary"
                   autoComplete="off"
                   spellCheck={false}

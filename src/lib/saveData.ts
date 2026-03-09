@@ -9,11 +9,24 @@ export interface SaveData {
 
 const DEFAULT_SAVE: SaveData = { highLevel: 0, kills: 0, games: 0, bestTurns: 0 };
 
+function sanitizeNumber(value: unknown, fallback: number): number {
+  return typeof value === "number" && Number.isFinite(value) && value >= 0
+    ? Math.floor(value)
+    : fallback;
+}
+
 export function loadSave(): SaveData {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return { ...DEFAULT_SAVE };
-    return { ...DEFAULT_SAVE, ...JSON.parse(raw) };
+    const parsed = JSON.parse(raw);
+    if (typeof parsed !== "object" || parsed === null) return { ...DEFAULT_SAVE };
+    return {
+      highLevel: sanitizeNumber(parsed.highLevel, 0),
+      kills: sanitizeNumber(parsed.kills, 0),
+      games: sanitizeNumber(parsed.games, 0),
+      bestTurns: sanitizeNumber(parsed.bestTurns, 0),
+    };
   } catch {
     return { ...DEFAULT_SAVE };
   }

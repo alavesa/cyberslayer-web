@@ -61,6 +61,7 @@ Currently: 10 zones, 10 enemies, 3 specials (replicate, encrypt, adapt)
 
 ## Phase 5: Game Modes
 
+- **Tutorial mode** — guided first run that teaches mechanics step by step: weapon selection, weakness system, enemy specials, shield, terminal commands. Highlights UI elements with overlays and prompts the player through a scripted easy battle before the real game begins
 - **Endless mode** — infinite zones with scaling difficulty, leaderboard by zones cleared
 - **Daily challenge** — fixed seed run, everyone gets same enemies/RNG, compete on turn count
 - **Speed run mode** — timer + turn counter, global leaderboard
