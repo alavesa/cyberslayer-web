@@ -4,8 +4,7 @@ A turn-based cybersecurity combat game built for the browser. Breach 10 corporat
 
 **Play now: [https://cyberslayer.win/](https://cyberslayer.win/)**
 
-<img width="1909" height="1086" alt="Screenshot 2026-03-09 at 14 54 12" src="https://github.com/user-attachments/assets/6b822363-0c95-4dfa-81a8-62a33275ca5f" />
-
+![cyberslayer_linkedin](https://github.com/user-attachments/assets/cbf0b2c7-131f-490e-919c-837a4e26aef7)
 
 ## Gameplay
 
