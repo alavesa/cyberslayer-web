@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState, useCallback } from "react";
 import { Crosshair, Radar, Bug, Heart, Shield, Skull, Zap, Lock, RefreshCw, Shuffle } from "lucide-react";
 import { NUM_LEVELS, LEVELS, ENEMY_ART, ENEMY_INFO, ZONE_INFO, WEAPON_INFO, DIFFICULTY_MODS } from "@/lib/gameEngine";
-import type { GameState, LogEntry } from "@/hooks/useGameState";
+import type { GameState } from "@/hooks/useGameState";
 import type { Weapon, Special } from "@/lib/gameEngine";
 import ZoneProgress from "./ZoneProgress";
 import FloatingDamage from "./FloatingDamage";
@@ -31,18 +31,18 @@ interface BattleScreenProps {
 
 export default function BattleScreen({ state, attack, enterZone, goToMenu, runCommand }: BattleScreenProps) {
   const logRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
   const [cmdInput, setCmdInput] = useState("");
   const [activeTooltip, setActiveTooltip] = useState<{ index: number; text: string } | null>(null);
 
-  const handleCommand = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && cmdInput.trim() && runCommand) {
+  const handleCommand = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+    const value = e.currentTarget.value;
+    if (e.key === "Enter" && value.trim() && runCommand) {
       e.preventDefault();
       e.stopPropagation();
-      runCommand(cmdInput);
+      runCommand(value);
       setCmdInput("");
     }
-  }, [cmdInput, runCommand]);
+  }, [runCommand]);
 
   // Dismiss tooltip on click outside
   useEffect(() => {
@@ -552,7 +552,6 @@ export default function BattleScreen({ state, attack, enterZone, goToMenu, runCo
               <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-border/20">
                 <span className="text-primary/60 text-xs shrink-0">$</span>
                 <input
-                  ref={inputRef}
                   type="text"
                   value={cmdInput}
                   onChange={(e) => setCmdInput(e.target.value)}

@@ -101,12 +101,19 @@ function spawnEnemy(level: number, difficulty: Difficulty = "normal"): Partial<G
   };
 }
 
+const MAX_LOG_ENTRIES = 150;
+
+const ENCRYPT_TOOLTIP = "Encryption scrambles your attack data, reducing effectiveness by 50%.";
+const REPLICATE_TOOLTIP = "Self-replicating malware creates copies to amplify its attack power.";
+const ADAPT_TOOLTIP = "Advanced Persistent Threats learn from repeated attacks. Vary your weapons!";
+
 function entry(text: string, opts?: Partial<Omit<LogEntry, "text">>): LogEntry {
   return { text, ...opts };
 }
 
 function addLog(state: GameState, ...entries: LogEntry[]): LogEntry[] {
-  return [...state.combatLog, ...entries];
+  const combined = [...state.combatLog, ...entries];
+  return combined.length > MAX_LOG_ENTRIES ? combined.slice(-MAX_LOG_ENTRIES) : combined;
 }
 
 // ─── Reducer ─────────────────────────────────────────────────────────────────
@@ -177,17 +184,16 @@ function gameReducer(state: GameState, action: Action): GameState {
 
       const entries: LogEntry[] = [];
       const weaponName = weapon === "ping" ? "Ping" : weapon === "nmap" ? "Nmap" : "Metasploit";
-      const weaponKey = weapon as Weapon;
       entries.push(entry(`You used ${weaponName}! ${result.damage} dmg!`, {
-        tooltip: WEAPON_INFO[weaponKey].desc,
+        tooltip: WEAPON_INFO[weapon].desc,
         animation: "damage",
       }));
       if (result.isCrit) entries.push(entry("CRITICAL HIT! Weakness exploited!", { animation: "crit" }));
       if (result.wasEncrypted) entries.push(entry("Weapons were encrypted! Damage halved!", {
-        tooltip: "Encryption scrambles your attack data, reducing effectiveness by 50%.",
+        tooltip: ENCRYPT_TOOLTIP,
       }));
       if (result.wasAdapted) entries.push(entry("APT adapted! Damage reduced!", {
-        tooltip: "Advanced Persistent Threats learn from repeated attacks. Vary your weapons!",
+        tooltip: ADAPT_TOOLTIP,
       }));
 
       const newEnemyHP = Math.max(0, state.enemyHP - result.damage);
@@ -274,12 +280,12 @@ function gameReducer(state: GameState, action: Action): GameState {
       const eTurn = enemyTurn(state.enemyAtk, state.enemySpecial, turnCount, state.shield);
 
       if (eTurn.replicated) entries.push(entry("Worm replicated! Extra dmg!", {
-        tooltip: "Self-replicating malware creates copies to amplify its attack power.",
+        tooltip: REPLICATE_TOOLTIP,
       }));
       entries.push(entry(`${state.enemyName} attacks for ${eTurn.damage}!`, { animation: "damage" }));
       if (eTurn.absorbed > 0) entries.push(entry(`Shield absorbed ${eTurn.absorbed} dmg`));
       if (eTurn.encrypted) entries.push(entry("Weapons encrypted! Next attack halved!", {
-        tooltip: "Encryption scrambles your attack data, reducing effectiveness by 50%.",
+        tooltip: ENCRYPT_TOOLTIP,
       }));
 
       const newPlayerHP = state.playerHP - eTurn.hpDamage;
