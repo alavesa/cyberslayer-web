@@ -105,7 +105,7 @@ export default function BattleScreen({ state, attack, enterZone, goToMenu }: Bat
         {goToMenu && (
           <button
             onClick={goToMenu}
-            className="px-2 py-1 font-pixel text-xs text-destructive/70 border border-destructive/30 bg-card/80 hover:bg-destructive/20 hover:text-destructive hover:border-destructive/50 transition-all tracking-wider"
+            className="px-3 min-h-[44px] flex items-center font-pixel text-xs text-destructive/70 border border-destructive/30 bg-card/80 hover:bg-destructive/20 hover:text-destructive hover:border-destructive/50 transition-all tracking-wider"
             title="Abort mission"
           >
             ABORT
@@ -360,8 +360,8 @@ export default function BattleScreen({ state, attack, enterZone, goToMenu }: Bat
               {/* Ammo reserves */}
               <div className="space-y-1.5 mb-3">
                 <div className="text-xs font-pixel text-muted-foreground/80 tracking-wider">AMMO RESERVES</div>
-                <div className="grid grid-cols-2 gap-2 text-sm font-terminal">
-                  <div className="bg-muted/20 px-3 py-1.5 border border-border/20">
+                <div className="grid grid-cols-2 gap-1.5 sm:gap-2 text-sm font-terminal">
+                  <div className="bg-muted/20 px-2 sm:px-3 py-1.5 border border-border/20">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">NMAP:</span>
                       <span className={state.nmapAmmo > 2 ? "text-primary glow-green" : state.nmapAmmo > 0 ? "text-accent glow-yellow" : "text-destructive glow-red"}>
@@ -370,7 +370,7 @@ export default function BattleScreen({ state, attack, enterZone, goToMenu }: Bat
                     </div>
                     {state.nmapAmmo === 0 && <p className="text-xs text-destructive/70 mt-0.5">DEPLETED</p>}
                   </div>
-                  <div className="bg-muted/20 px-3 py-1.5 border border-border/20">
+                  <div className="bg-muted/20 px-2 sm:px-3 py-1.5 border border-border/20">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">META:</span>
                       <span className={state.metaAmmo > 1 ? "text-primary glow-green" : state.metaAmmo > 0 ? "text-accent glow-yellow" : "text-destructive glow-red"}>
@@ -476,7 +476,7 @@ export default function BattleScreen({ state, attack, enterZone, goToMenu }: Bat
               role="log"
               aria-live="polite"
               aria-label="Combat log"
-              className="h-32 sm:h-40 overflow-y-auto space-y-0.5 font-terminal text-xs sm:text-sm scrollbar-thin"
+              className="h-36 sm:h-40 overflow-y-auto space-y-0.5 font-terminal text-xs sm:text-sm scrollbar-thin"
             >
               {state.combatLog.map((msg, i) => (
                 <p

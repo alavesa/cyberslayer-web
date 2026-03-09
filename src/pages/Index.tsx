@@ -68,7 +68,7 @@ function IntroScreen({ onStart }: { onStart: (difficulty: Difficulty) => void })
             OPERATOR BRIEFING
           </div>
           <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
-            <div className="flex-shrink-0" aria-hidden="true">
+            <div className="flex-shrink-0 max-w-full overflow-x-auto" aria-hidden="true">
               <pre className="text-cyan-400/70 text-[10px] sm:text-xs leading-tight font-mono glow-blue enemy-idle">
                 {OPERATOR_FRAMES[artFrame]}
               </pre>
@@ -118,7 +118,7 @@ function IntroScreen({ onStart }: { onStart: (difficulty: Difficulty) => void })
               role="radio"
               aria-checked={difficulty === d}
               onClick={() => setDifficulty(d)}
-              className={`flex-1 py-2 font-pixel text-[10px] sm:text-[11px] tracking-wider border transition-all ${
+              className={`flex-1 min-h-[44px] py-2 font-pixel text-[10px] sm:text-[11px] tracking-wider border transition-all ${
                 difficulty === d
                   ? d === "easy"
                     ? "bg-primary/20 text-primary border-primary/50 glow-green"

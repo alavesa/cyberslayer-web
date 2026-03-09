@@ -7,7 +7,7 @@ export default function MuteButton() {
   return (
     <button
       onClick={() => setMuted(toggleMute())}
-      className="p-2 border border-border/30 bg-card/50 text-muted-foreground hover:text-primary transition-colors"
+      className="min-w-[44px] min-h-[44px] flex items-center justify-center border border-border/30 bg-card/50 text-muted-foreground hover:text-primary transition-colors"
       aria-label={muted ? "Unmute" : "Mute"}
     >
       {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
