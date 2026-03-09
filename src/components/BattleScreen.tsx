@@ -286,10 +286,8 @@ export default function BattleScreen({ state, attack, enterZone, goToMenu }: Bat
             )}
           </div>
 
-          {/* Right: Player stats + actions */}
-          <div className="space-y-2 sm:space-y-3">
-            {/* Player stats */}
-            <div className={`bg-card pixel-border-blue p-3 sm:p-4 relative ${state.playerHit ? "animate-damage-flash" : ""}`}>
+          {/* Right: Player stats + actions (combined) */}
+          <div className={`bg-card pixel-border-blue p-3 sm:p-4 relative ${state.playerHit ? "animate-damage-flash" : ""} ${!state.locked && !isTransition ? "attack-ready" : ""}`}>
               <FloatingDamage
                 damage={state.lastDamageTaken}
                 isCrit={false}
@@ -304,18 +302,18 @@ export default function BattleScreen({ state, attack, enterZone, goToMenu }: Bat
               {/* Operator terminal art */}
               <div className="flex items-center justify-center h-24 sm:h-32 mb-3 bg-cyber-dark border border-border/20 overflow-hidden" aria-hidden="true">
                 <pre className="text-cyan-400/70 text-[10px] sm:text-xs leading-tight font-mono glow-blue enemy-idle">{artFrame === 0
-? `  ┌───┐ ┌──────┐
-  │° °│ │root@█│
-  │ ─ │ │$ _   │
-  └─┬─┘ └──────┘
-  ─/│\\─
-   / \\`
-: `  ┌───┐ ┌──────┐
-  │° °│ │root@█│
-  │ ▪ │ │$ ▓▓▓ │
-  └─┬─┘ └──────┘
-  ─/│\\──~
-   / \\`}</pre>
+? `  +---+ +------+
+  |o o| |root@#|
+  | - | |$ _   |
+  +-+-+ +------+
+   /|\\
+ / \\`
+: `  +---+ +------+
+  |o o| |root@#|
+  | . | |$ ### |
+  +-+-+ +------+
+   /|\\--~
+ / \\`}</pre>
               </div>
 
               {/* HP */}
@@ -344,7 +342,7 @@ export default function BattleScreen({ state, attack, enterZone, goToMenu }: Bat
               )}
 
               {/* Ammo reserves */}
-              <div className="space-y-1.5">
+              <div className="space-y-1.5 mb-3">
                 <div className="text-xs font-pixel text-muted-foreground/80 tracking-wider">AMMO RESERVES</div>
                 <div className="grid grid-cols-2 gap-2 text-sm font-terminal">
                   <div className="bg-muted/20 px-3 py-1.5 border border-border/20">
@@ -370,7 +368,7 @@ export default function BattleScreen({ state, attack, enterZone, goToMenu }: Bat
 
               {/* Status effects */}
               {state.weaponEncrypted && (
-                <div className="mt-2 bg-destructive/10 border border-destructive/30 px-3 py-2">
+                <div className="mb-3 bg-destructive/10 border border-destructive/30 px-3 py-2">
                   <div className="flex items-center gap-2 font-pixel text-[11px] text-destructive glow-red animate-pulse tracking-wider">
                     <Lock className="w-3.5 h-3.5" />
                     WEAPONS ENCRYPTED
@@ -378,16 +376,16 @@ export default function BattleScreen({ state, attack, enterZone, goToMenu }: Bat
                   <p className="text-xs font-terminal text-destructive/80 mt-1">Next attack deals half damage</p>
                 </div>
               )}
-            </div>
 
-            {/* Combat actions */}
-            <div className={`bg-card pixel-border-green p-3 sm:p-4 ${!state.locked && !isTransition ? "attack-ready" : ""}`}>
-              <div className="flex items-center justify-between font-pixel text-[10px] sm:text-xs text-primary glow-green mb-2 sm:mb-3 pb-2 border-b border-primary/20">
+              {/* Select Attack divider */}
+              <div className="flex items-center justify-between font-pixel text-[10px] sm:text-xs text-primary glow-green mb-2 sm:mb-3 pb-2 border-b border-primary/20 border-t border-t-primary/20 pt-3">
                 <span>{!state.locked && !isTransition ? "▶ SELECT ATTACK" : "▶ ATTACKS"}</span>
                 <span className={`font-terminal text-[10px] sm:text-xs ${!state.locked && !isTransition ? "text-primary glow-green animate-pulse" : "text-muted-foreground"}`}>
                   {!state.locked && !isTransition ? "TAP OR 1-3" : "2x on weakness!"}
                 </span>
               </div>
+
+              {/* Attack buttons */}
               <div className="space-y-2">
                 <button
                   onClick={() => attack("ping")}
@@ -441,7 +439,6 @@ export default function BattleScreen({ state, attack, enterZone, goToMenu }: Bat
                   </div>
                 </button>
               </div>
-            </div>
           </div>
         </div>
 

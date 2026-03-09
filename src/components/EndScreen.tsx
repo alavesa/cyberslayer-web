@@ -1,6 +1,7 @@
 import { getRank, getRandomWisdom, NUM_LEVELS, LEVELS, ENEMY_INFO, ZONE_INFO, WEAPON_INFO } from "@/lib/gameEngine";
 import type { GameState } from "@/hooks/useGameState";
 import ZoneProgress from "./ZoneProgress";
+import MuteButton from "./MuteButton";
 import { useEffect, useMemo, useState } from "react";
 
 interface EndScreenProps {
@@ -64,33 +65,33 @@ function getDefeatTier(level: number) {
 }
 
 const VICTORY_FRAMES = [
-`  ┌───┐ ┌──────┐
-  │^ ^│ │root@█│
-  │ u │ │$ WIN │
-  └─┬─┘ └──────┘
-  ─/│\\──~
-   / \\`,
-`  ┌───┐ ┌──────┐
-  │' '│ │root@█│
-  │ u │ │$ *** │
-  └─┬─┘ └──────┘
-  \\│/──~
-   / \\`,
+`  +---+ +------+
+  |^ ^| |root@#|
+  | u | |$ WIN |
+  +-+-+ +------+
+   /|\\--~
+ / \\`,
+`  +---+ +------+
+  |' '| |root@#|
+  | u | |$ *** |
+  +-+-+ +------+
+   \\|/--~
+ / \\`,
 ];
 
 const DEFEAT_FRAMES = [
-`  ┌───┐ ┌──────┐
-  │x x│ │root@█│
-  │ ─ │ │$ ERR │
-  └─┬─┘ └──────┘
-  ─/│\\─
-   / \\`,
-`  ┌───┐ ┌──────┐
-  │- -│ │root@█│
-  │ _ │ │$ ... │
-  └─┬─┘ └──────┘
-  ─/│\\─
-   / \\`,
+`  +---+ +------+
+  |x x| |root@#|
+  | - | |$ ERR |
+  +-+-+ +------+
+   /|\\
+ / \\`,
+`  +---+ +------+
+  |- -| |root@#|
+  | _ | |$ ... |
+  +-+-+ +------+
+   /|\\
+ / \\`,
 ];
 
 export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps) {
@@ -112,7 +113,7 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
   const defeatTier = !state.victory ? getDefeatTier(state.level) : null;
 
   return (
-    <div className="min-h-[100dvh] bg-background flex items-start justify-center p-2 sm:p-4 terminal-grid scanlines crt-glow relative">
+    <div className="min-h-[100dvh] bg-background flex flex-col items-center justify-start sm:justify-center p-3 sm:p-4 relative overflow-hidden terminal-grid scanlines crt-glow">
       {/* Victory particle effects */}
       {state.victory && (
         <div className="fixed inset-0 pointer-events-none z-20 overflow-hidden">
@@ -138,7 +139,12 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
         </div>
       )}
 
-      <div className="relative z-10 w-full max-w-md py-4 sm:py-6">
+      {/* Mute button */}
+      <div className="fixed top-3 right-3 z-20">
+        <MuteButton />
+      </div>
+
+      <div className="relative z-10 w-full max-w-md animate-flicker py-4 sm:py-0">
         {/* Result header */}
         <div className={`px-4 py-6 sm:px-6 sm:py-8 text-center mb-4 sm:mb-6 ${state.victory ? 'victory-banner' : defeatTier?.borderClass || 'bubble'}`}>
           {state.victory ? (
