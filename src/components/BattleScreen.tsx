@@ -6,6 +6,7 @@ import type { Weapon, Special } from "@/lib/gameEngine";
 import ZoneProgress from "./ZoneProgress";
 import FloatingDamage from "./FloatingDamage";
 import MuteButton from "./MuteButton";
+import ScaledArt from "./ScaledArt";
 import {
   playAttackSound, playCritSound, playEnemyDeathSound,
   playPlayerDamageSound, playLevelUpSound, playDefeatSound, playVictorySound,
@@ -243,9 +244,11 @@ export default function BattleScreen({ state, attack, enterZone, goToMenu }: Bat
                 </div>
 
                 {/* ASCII art enemy */}
-                <div className="flex items-center justify-center h-24 sm:h-32 mb-2 sm:mb-3 bg-cyber-dark border border-border/20 overflow-hidden" aria-hidden="true">
-                  <pre className="text-secondary/80 text-[10px] sm:text-xs leading-tight font-mono glow-pink enemy-idle">{art}</pre>
-                </div>
+                <ScaledArt
+                  art={art}
+                  className="h-24 sm:h-32 mb-2 sm:mb-3 bg-cyber-dark border border-border/20"
+                  artClassName="text-secondary/80 glow-pink enemy-idle"
+                />
 
                 {/* Enemy intel */}
                 {ENEMY_INFO[state.enemyName] && (
@@ -316,8 +319,8 @@ export default function BattleScreen({ state, attack, enterZone, goToMenu }: Bat
               </div>
 
               {/* Operator terminal art */}
-              <div className="flex items-center justify-center h-24 sm:h-32 mb-3 bg-cyber-dark border border-border/20 overflow-hidden" aria-hidden="true">
-                <pre className="text-cyan-400/70 text-[10px] sm:text-xs leading-tight font-mono glow-blue enemy-idle">{artFrame === 0
+              <ScaledArt
+                art={artFrame === 0
 ? `  +---+ +------+
   |o o| |root@#|
   | - | |$ _   |
@@ -329,8 +332,10 @@ export default function BattleScreen({ state, attack, enterZone, goToMenu }: Bat
   | . | |$ ### |
   +-+-+ +------+
    /|\\--~
-   / \\`}</pre>
-              </div>
+   / \\`}
+                className="h-24 sm:h-32 mb-3 bg-cyber-dark border border-border/20"
+                artClassName="text-cyan-400/70 glow-blue enemy-idle"
+              />
 
               {/* HP */}
               <div className="space-y-1 mb-3">

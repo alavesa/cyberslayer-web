@@ -5,7 +5,7 @@ import { getRank, DIFFICULTY_MODS, type Difficulty } from "@/lib/gameEngine";
 import BattleScreen from "@/components/BattleScreen";
 import EndScreen from "@/components/EndScreen";
 import MuteButton from "@/components/MuteButton";
-
+import ScaledArt from "@/components/ScaledArt";
 const TAGLINES = [
   "THE NETWORK IS COMPROMISED — YOU'RE THE CURE",
   "ROGUE PACKETS DETECTED — INITIATE COUNTERMEASURES",
@@ -68,10 +68,12 @@ function IntroScreen({ onStart }: { onStart: (difficulty: Difficulty) => void })
             OPERATOR BRIEFING
           </div>
           <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
-            <div className="flex-shrink-0 max-w-full overflow-x-auto" aria-hidden="true">
-              <pre className="text-cyan-400/70 text-[10px] sm:text-xs leading-tight font-mono glow-blue enemy-idle">
-                {OPERATOR_FRAMES[artFrame]}
-              </pre>
+            <div className="flex-shrink-0 w-full sm:w-auto" aria-hidden="true">
+              <ScaledArt
+                art={OPERATOR_FRAMES[artFrame]}
+                className="h-20 sm:h-24"
+                artClassName="text-cyan-400/70 glow-blue enemy-idle"
+              />
             </div>
             <div className="font-terminal text-sm text-muted-foreground leading-relaxed space-y-2 text-center sm:text-left">
               <p>You are a <span className="text-cyan-400">network operator</span> tasked with breaching a compromised corporate network.</p>
