@@ -70,13 +70,13 @@ const VICTORY_FRAMES = [
   | u | |$ WIN |
   +-+-+ +------+
    /|\\--~
- / \\`,
+/ \\`,
 `  +---+ +------+
   |' '| |root@#|
   | u | |$ *** |
   +-+-+ +------+
    \\|/--~
- / \\`,
+/ \\`,
 ];
 
 const DEFEAT_FRAMES = [
@@ -85,13 +85,13 @@ const DEFEAT_FRAMES = [
   | - | |$ ERR |
   +-+-+ +------+
    /|\\
- / \\`,
+   / \\`,
 `  +---+ +------+
   |- -| |root@#|
   | _ | |$ ... |
   +-+-+ +------+
    /|\\
- / \\`,
+   / \\`,
 ];
 
 export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps) {

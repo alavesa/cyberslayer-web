@@ -144,6 +144,22 @@ export default function BattleScreen({ state, attack, enterZone, goToMenu }: Bat
           />
         </div>
 
+        {/* Turn indicator */}
+        <div className="flex items-center justify-between px-3 py-1.5 bg-card/50 border border-border/20">
+          <span className="font-terminal text-[11px] text-muted-foreground">
+            TURN {state.turnCount}
+          </span>
+          <span className={`font-pixel text-[11px] tracking-wider ${
+            isTransition
+              ? "text-cyan-400 glow-blue"
+              : state.locked
+                ? "text-secondary glow-pink"
+                : "text-primary glow-green"
+          }`}>
+            {isTransition ? "BREACHING NEXT ZONE..." : state.locked ? "PROCESSING..." : "YOUR MOVE"}
+          </span>
+        </div>
+
         {/* Main battle area — always 2-column on desktop */}
         <div className="grid md:grid-cols-2 gap-2 sm:gap-3 relative">
           {/* VS badge — desktop only, during battle */}
@@ -307,13 +323,13 @@ export default function BattleScreen({ state, attack, enterZone, goToMenu }: Bat
   | - | |$ _   |
   +-+-+ +------+
    /|\\
- / \\`
+   / \\`
 : `  +---+ +------+
   |o o| |root@#|
   | . | |$ ### |
   +-+-+ +------+
    /|\\--~
- / \\`}</pre>
+   / \\`}</pre>
               </div>
 
               {/* HP */}
@@ -442,52 +458,44 @@ export default function BattleScreen({ state, attack, enterZone, goToMenu }: Bat
           </div>
         </div>
 
-        {/* Turn indicator */}
-        <div className="flex items-center justify-between px-3 py-1.5 bg-card/50 border border-border/20">
-          <span className="font-terminal text-[11px] text-muted-foreground">
-            TURN {state.turnCount}
-          </span>
-          <span className={`font-pixel text-[11px] tracking-wider ${
-            isTransition
-              ? "text-cyan-400 glow-blue"
-              : state.locked
-                ? "text-secondary glow-pink"
-                : "text-primary glow-green"
-          }`}>
-            {isTransition ? "BREACHING NEXT ZONE..." : state.locked ? "PROCESSING..." : "YOUR MOVE"}
-          </span>
-        </div>
-
         {/* Operator terminal log */}
-        <div className="bg-card pixel-border p-2 sm:p-3">
-          <div className="flex items-center justify-between mb-1 sm:mb-2">
-            <span className="text-[10px] sm:text-[11px] font-pixel text-muted-foreground tracking-wider">OPERATOR TERMINAL</span>
-            <span className="text-[10px] font-terminal text-muted-foreground/40">root@cyberslayer ~</span>
+        <div className="border border-border/40 overflow-hidden bg-black/80">
+          {/* Title bar */}
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-muted/40 border-b border-border/30">
+            <div className="flex gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-destructive/70" />
+              <span className="w-2.5 h-2.5 rounded-full bg-accent/70" />
+              <span className="w-2.5 h-2.5 rounded-full bg-primary/70" />
+            </div>
+            <span className="flex-1 text-center text-[10px] font-terminal text-muted-foreground/60">root@cyberslayer: ~/ops</span>
           </div>
-          <div
-            ref={logRef}
-            role="log"
-            aria-live="polite"
-            aria-label="Combat log"
-            className="h-32 sm:h-40 overflow-y-auto space-y-0.5 font-terminal text-xs sm:text-sm scrollbar-thin"
-          >
-            {state.combatLog.map((msg, i) => (
-              <p
-                key={i}
-                className={`log-entry ${
-                  msg.includes("CRITICAL") ? "text-accent glow-yellow font-bold" :
-                  msg.includes("destroyed") || msg.includes("SECURED") ? "text-primary glow-green font-bold" :
-                  msg.includes("attacks") || msg.includes("COMPROMISED") ? "text-destructive glow-red" :
-                  msg.includes("encrypted") || msg.includes("halved") ? "text-secondary glow-pink" :
-                  msg.includes("adapted") || msg.includes("reduced") ? "text-secondary" :
-                  msg.includes("Healed") || msg.includes("+") ? "text-green-400" :
-                  msg.includes("appeared") || msg.includes("Entering") ? "text-cyan-400" :
-                  "text-muted-foreground"
-                }`}
-              >
-                <span className="text-cyan-400/40">$</span> {msg}
-              </p>
-            ))}
+          {/* Terminal body */}
+          <div className="p-2 sm:p-3">
+            <div
+              ref={logRef}
+              role="log"
+              aria-live="polite"
+              aria-label="Combat log"
+              className="h-32 sm:h-40 overflow-y-auto space-y-0.5 font-terminal text-xs sm:text-sm scrollbar-thin"
+            >
+              {state.combatLog.map((msg, i) => (
+                <p
+                  key={i}
+                  className={`log-entry ${
+                    msg.includes("CRITICAL") ? "text-accent glow-yellow font-bold" :
+                    msg.includes("destroyed") || msg.includes("SECURED") ? "text-primary glow-green font-bold" :
+                    msg.includes("attacks") || msg.includes("COMPROMISED") ? "text-destructive glow-red" :
+                    msg.includes("encrypted") || msg.includes("halved") ? "text-secondary glow-pink" :
+                    msg.includes("adapted") || msg.includes("reduced") ? "text-secondary" :
+                    msg.includes("Healed") || msg.includes("+") ? "text-green-400" :
+                    msg.includes("appeared") || msg.includes("Entering") ? "text-cyan-400" :
+                    "text-muted-foreground"
+                  }`}
+                >
+                  <span className="text-primary/40">$</span> {msg}
+                </p>
+              ))}
+            </div>
           </div>
         </div>
       </div>

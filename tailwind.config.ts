@@ -15,7 +15,7 @@ export default {
     extend: {
       fontFamily: {
         pixel: ['"Press Start 2P"', "monospace"],
-        terminal: ['"VT323"', '"Courier New"', "monospace"],
+        terminal: ['"Space Mono"', '"Courier New"', "monospace"],
       },
       colors: {
         border: "hsl(var(--border))",

@@ -6,25 +6,36 @@ import BattleScreen from "@/components/BattleScreen";
 import EndScreen from "@/components/EndScreen";
 import MuteButton from "@/components/MuteButton";
 
+const TAGLINES = [
+  "THE NETWORK IS COMPROMISED — YOU'RE THE CURE",
+  "ROGUE PACKETS DETECTED — INITIATE COUNTERMEASURES",
+  "10 ZONES. 10 THREATS. ONE OPERATOR.",
+  "THEY BREACHED THE NETWORK — YOU BREACH BACK",
+  "ROOT ACCESS REQUIRED — HACK OR BE HACKED",
+  "THE FIREWALL HAS FALLEN — YOU'RE THE LAST LINE",
+  "INFECTED NETWORK. ARMED OPERATOR. NO BACKUP.",
+];
+
 const OPERATOR_FRAMES = [
 `  +---+ +------+
   |o o| |root@#|
   | - | |$ _   |
   +-+-+ +------+
    /|\\
- / \\`,
+   / \\`,
 `  +---+ +------+
   |o o| |root@#|
   | . | |$ ### |
   +-+-+ +------+
    /|\\--~
- / \\`,
+   / \\`,
 ];
 
 function IntroScreen({ onStart }: { onStart: (difficulty: Difficulty) => void }) {
   const save = loadSave();
   const rank = getRank(save.highLevel);
   const [difficulty, setDifficulty] = useState<Difficulty>("normal");
+  const [tagline] = useState(() => TAGLINES[Math.floor(Math.random() * TAGLINES.length)]);
   const [artFrame, setArtFrame] = useState(0);
 
   useEffect(() => {
@@ -47,7 +58,7 @@ function IntroScreen({ onStart }: { onStart: (difficulty: Difficulty) => void })
             <span className="text-secondary glow-pink">SLAYER</span>
           </h1>
           <p className="text-muted-foreground text-xs sm:text-sm mt-3 sm:mt-4 font-terminal">
-            [ THE NETWORK IS COMPROMISED — YOU'RE THE CURE ]
+            [ {tagline} ]
           </p>
         </div>
 
