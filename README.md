@@ -100,6 +100,17 @@ src/
     Index.tsx         # Intro screen + phase routing
 ```
 
+## Roadmap
+
+See [ROADMAP.md](ROADMAP.md) for the full development roadmap, including:
+
+- **Phase 1** — Expanded arsenal (Wireshark, Burp Suite, Hashcat, Firewall, Honeypot, John the Ripper)
+- **Phase 2** — New threats & zones (extend to 15-20 zones with new enemy specials like DDoS, Polymorphic, Exfiltrate)
+- **Phase 3** — Player progression (skill tree, perks, loadouts, achievements)
+- **Phase 4** — Advanced combat (status effects, combos, defense actions, boss phases)
+- **Phase 5** — Game modes (endless, daily challenge, speed run, PvP)
+- **Phase 6** — Polish & content (sound, story, PWA, accessibility)
+
 ## License
 
 MIT
