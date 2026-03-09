@@ -167,14 +167,14 @@ function IntroScreen({ onStart }: { onStart: (difficulty: Difficulty) => void })
 }
 
 export default function Index() {
-  const { state, attack, startGame, enterZone, playAgain, goToMenu } = useGameState();
+  const { state, attack, startGame, enterZone, playAgain, goToMenu, runCommand } = useGameState();
 
   switch (state.phase) {
     case "intro":
       return <IntroScreen onStart={startGame} />;
     case "battle":
     case "transition":
-      return <BattleScreen state={state} attack={attack} enterZone={enterZone} goToMenu={goToMenu} />;
+      return <BattleScreen state={state} attack={attack} enterZone={enterZone} goToMenu={goToMenu} runCommand={runCommand} />;
     case "end":
       return <EndScreen state={state} playAgain={playAgain} goToMenu={goToMenu} />;
   }

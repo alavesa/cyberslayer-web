@@ -2,10 +2,20 @@ import { useReducer, useCallback, useEffect } from "react";
 import {
   PLAYER_START_HP, NMAP_START, META_START, NUM_LEVELS,
   LEVELS, calculateDamage, enemyTurn, applyLoot, getWeaknessHint,
-  DIFFICULTY_MODS,
+  DIFFICULTY_MODS, WEAPON_INFO, ENEMY_INFO, ZONE_INFO, getRank,
   type Weapon, type Special, type Difficulty,
 } from "@/lib/gameEngine";
 import { updateAfterGame } from "@/lib/saveData";
+
+// ─── Log Entry ────────────────────────────────────────────────────────────────
+
+export interface LogEntry {
+  text: string;
+  tooltip?: string;
+  animation?: "crit" | "damage" | "death" | "system";
+  isCommand?: boolean;
+  isResponse?: boolean;
+}
 
 // ─── State ───────────────────────────────────────────────────────────────────
 
@@ -39,7 +49,7 @@ export interface GameState {
   weaponEncrypted: boolean;
   locked: boolean;
   // UI
-  combatLog: string[];
+  combatLog: LogEntry[];
   victory: boolean;
   // Animation triggers
   playerHit: boolean;
@@ -66,7 +76,8 @@ type Action =
   | { type: "UNLOCK" }
   | { type: "ENTER_ZONE" }
   | { type: "PLAY_AGAIN" }
-  | { type: "GO_TO_MENU" };
+  | { type: "GO_TO_MENU" }
+  | { type: "TERMINAL_CMD"; command: string };
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -90,8 +101,12 @@ function spawnEnemy(level: number, difficulty: Difficulty = "normal"): Partial<G
   };
 }
 
-function addLog(state: GameState, ...messages: string[]): string[] {
-  return [...state.combatLog, ...messages];
+function entry(text: string, opts?: Partial<Omit<LogEntry, "text">>): LogEntry {
+  return { text, ...opts };
+}
+
+function addLog(state: GameState, ...entries: LogEntry[]): LogEntry[] {
+  return [...state.combatLog, ...entries];
 }
 
 // ─── Reducer ─────────────────────────────────────────────────────────────────
@@ -116,7 +131,10 @@ function gameReducer(state: GameState, action: Action): GameState {
         kills: 0,
         totalTurns: 0,
         ...enemy,
-        combatLog: [`Entering ${LEVELS[0].zone}...`, `${LEVELS[0].enemy} appeared!`],
+        combatLog: [
+          entry(`Entering ${LEVELS[0].zone}...`, { tooltip: ZONE_INFO[LEVELS[0].zone] }),
+          entry(`${LEVELS[0].enemy} appeared!`, { tooltip: ENEMY_INFO[LEVELS[0].enemy] }),
+        ],
         victory: false,
         locked: false,
         playerHit: false,
@@ -141,10 +159,10 @@ function gameReducer(state: GameState, action: Action): GameState {
 
       // Ammo check
       if (weapon === "nmap" && state.nmapAmmo <= 0) {
-        return { ...state, combatLog: addLog(state, "No Nmap ammo left!") };
+        return { ...state, combatLog: addLog(state, entry("No Nmap ammo left!")) };
       }
       if (weapon === "meta" && state.metaAmmo <= 0) {
-        return { ...state, combatLog: addLog(state, "No Metasploit ammo left!") };
+        return { ...state, combatLog: addLog(state, entry("No Metasploit ammo left!")) };
       }
 
       // Deduct ammo
@@ -157,12 +175,20 @@ function gameReducer(state: GameState, action: Action): GameState {
         state.weaponEncrypted, state.lastWeapon,
       );
 
-      const log: string[] = [];
+      const entries: LogEntry[] = [];
       const weaponName = weapon === "ping" ? "Ping" : weapon === "nmap" ? "Nmap" : "Metasploit";
-      log.push(`You used ${weaponName}! ${result.damage} dmg!`);
-      if (result.isCrit) log.push("CRITICAL HIT! Weakness exploited!");
-      if (result.wasEncrypted) log.push("Weapons were encrypted! Damage halved!");
-      if (result.wasAdapted) log.push("APT adapted! Damage reduced!");
+      const weaponKey = weapon as Weapon;
+      entries.push(entry(`You used ${weaponName}! ${result.damage} dmg!`, {
+        tooltip: WEAPON_INFO[weaponKey].desc,
+        animation: "damage",
+      }));
+      if (result.isCrit) entries.push(entry("CRITICAL HIT! Weakness exploited!", { animation: "crit" }));
+      if (result.wasEncrypted) entries.push(entry("Weapons were encrypted! Damage halved!", {
+        tooltip: "Encryption scrambles your attack data, reducing effectiveness by 50%.",
+      }));
+      if (result.wasAdapted) entries.push(entry("APT adapted! Damage reduced!", {
+        tooltip: "Advanced Persistent Threats learn from repeated attacks. Vary your weapons!",
+      }));
 
       const newEnemyHP = Math.max(0, state.enemyHP - result.damage);
       const turnCount = state.turnCount + 1;
@@ -173,7 +199,7 @@ function gameReducer(state: GameState, action: Action): GameState {
         const newKills = state.kills + 1;
         const newLevel = state.level + 1;
         const newZoneCrits = [...state.zoneCrits, hitWeakness];
-        log.push(`${state.enemyName} destroyed!`);
+        entries.push(entry(`${state.enemyName} destroyed!`, { animation: "death" }));
 
         // Victory — all 10 zones cleared
         if (newLevel >= NUM_LEVELS) {
@@ -187,7 +213,7 @@ function gameReducer(state: GameState, action: Action): GameState {
             totalTurns: newTotalTurns,
             turnCount,
             nmapAmmo, metaAmmo,
-            combatLog: addLog(state, ...log, "NETWORK SECURED!"),
+            combatLog: addLog(state, ...entries, entry("NETWORK SECURED!", { animation: "system" })),
             victory: true,
             locked: true,
             lastWeapon: weapon,
@@ -228,7 +254,7 @@ function gameReducer(state: GameState, action: Action): GameState {
           shield: newShield,
           nmapAmmo: nmapAmmo + loot.nmapGain,
           metaAmmo: metaAmmo + loot.metaGain,
-          combatLog: addLog(state, ...log),
+          combatLog: addLog(state, ...entries),
           locked: true,
           enemyHit: true,
           playerHit: false,
@@ -247,10 +273,14 @@ function gameReducer(state: GameState, action: Action): GameState {
       // Enemy survives — enemy turn
       const eTurn = enemyTurn(state.enemyAtk, state.enemySpecial, turnCount, state.shield);
 
-      if (eTurn.replicated) log.push("Worm replicated! Extra dmg!");
-      log.push(`${state.enemyName} attacks for ${eTurn.damage}!`);
-      if (eTurn.absorbed > 0) log.push(`Shield absorbed ${eTurn.absorbed} dmg`);
-      if (eTurn.encrypted) log.push("Weapons encrypted! Next attack halved!");
+      if (eTurn.replicated) entries.push(entry("Worm replicated! Extra dmg!", {
+        tooltip: "Self-replicating malware creates copies to amplify its attack power.",
+      }));
+      entries.push(entry(`${state.enemyName} attacks for ${eTurn.damage}!`, { animation: "damage" }));
+      if (eTurn.absorbed > 0) entries.push(entry(`Shield absorbed ${eTurn.absorbed} dmg`));
+      if (eTurn.encrypted) entries.push(entry("Weapons encrypted! Next attack halved!", {
+        tooltip: "Encryption scrambles your attack data, reducing effectiveness by 50%.",
+      }));
 
       const newPlayerHP = state.playerHP - eTurn.hpDamage;
       const newShield = state.shield - eTurn.absorbed;
@@ -270,7 +300,7 @@ function gameReducer(state: GameState, action: Action): GameState {
           lastWeapon: weapon,
           weaponEncrypted: eTurn.encrypted,
           kills: state.kills,
-          combatLog: addLog(state, ...log, "SYSTEM COMPROMISED!"),
+          combatLog: addLog(state, ...entries, entry("SYSTEM COMPROMISED!", { animation: "system" })),
           victory: false,
           locked: true,
           playerHit: true,
@@ -295,7 +325,7 @@ function gameReducer(state: GameState, action: Action): GameState {
         turnCount,
         lastWeapon: weapon,
         weaponEncrypted: eTurn.encrypted,
-        combatLog: addLog(state, ...log),
+        combatLog: addLog(state, ...entries),
         locked: true,
         playerHit: eTurn.hpDamage > 0,
         enemyHit: true,
@@ -319,7 +349,10 @@ function gameReducer(state: GameState, action: Action): GameState {
         ...state,
         ...nextEnemy,
         phase: "battle",
-        combatLog: [`Entering ${LEVELS[state.level].zone}...`, `${LEVELS[state.level].enemy} appeared!`],
+        combatLog: [
+          entry(`Entering ${LEVELS[state.level].zone}...`, { tooltip: ZONE_INFO[LEVELS[state.level].zone] }),
+          entry(`${LEVELS[state.level].enemy} appeared!`, { tooltip: ENEMY_INFO[LEVELS[state.level].enemy] }),
+        ],
         locked: false,
         playerHit: false,
         enemyHit: false,
@@ -344,7 +377,10 @@ function gameReducer(state: GameState, action: Action): GameState {
         kills: 0,
         totalTurns: 0,
         ...enemy,
-        combatLog: [`Entering ${LEVELS[0].zone}...`, `${LEVELS[0].enemy} appeared!`],
+        combatLog: [
+          entry(`Entering ${LEVELS[0].zone}...`, { tooltip: ZONE_INFO[LEVELS[0].zone] }),
+          entry(`${LEVELS[0].enemy} appeared!`, { tooltip: ENEMY_INFO[LEVELS[0].enemy] }),
+        ],
         victory: false,
         locked: false,
         playerHit: false,
@@ -363,6 +399,64 @@ function gameReducer(state: GameState, action: Action): GameState {
 
     case "GO_TO_MENU":
       return { ...state, phase: "intro", combatLog: [], locked: false, playerHit: false, enemyHit: false, screenShake: false };
+
+    case "TERMINAL_CMD": {
+      const cmd = action.command.trim().toLowerCase();
+      const parts = cmd.split(/\s+/);
+      const base = parts[0];
+      const arg = parts.slice(1).join(" ");
+
+      const responses: LogEntry[] = [entry(`> ${action.command.trim()}`, { isCommand: true })];
+
+      if (base === "help") {
+        responses.push(entry("Available commands: help, scan, status, info <topic>, whoami", { isResponse: true }));
+        responses.push(entry("Topics: ping, nmap, metasploit, or any enemy/zone name", { isResponse: true }));
+      } else if (base === "scan") {
+        const weaknessName = state.enemyWeakness === "ping" ? "Ping" : state.enemyWeakness === "nmap" ? "Nmap" : "Metasploit";
+        const specialLabel = state.enemySpecial ? state.enemySpecial.toUpperCase() : "NONE";
+        responses.push(entry(`[SCAN] ${state.enemyName} | HP: ${state.enemyHP}/${state.enemyMaxHP} | ATK: ${state.enemyAtk}`, { isResponse: true }));
+        responses.push(entry(`[SCAN] Weakness: ${weaknessName} | Special: ${specialLabel}`, { isResponse: true }));
+        if (ENEMY_INFO[state.enemyName]) {
+          responses.push(entry(`[SCAN] ${ENEMY_INFO[state.enemyName]}`, { isResponse: true }));
+        }
+      } else if (base === "status") {
+        responses.push(entry(`[SYS] HP: ${state.playerHP}/${state.playerMaxHP} | Shield: ${state.shield}`, { isResponse: true }));
+        responses.push(entry(`[SYS] Nmap: ${state.nmapAmmo} | Meta: ${state.metaAmmo} | Turn: ${state.turnCount}`, { isResponse: true }));
+        if (state.weaponEncrypted) responses.push(entry("[SYS] WARNING: Weapons currently encrypted!", { isResponse: true }));
+      } else if (base === "info") {
+        const topic = arg.toLowerCase();
+        if (topic === "ping") {
+          responses.push(entry(`[INFO] ${WEAPON_INFO.ping.fullName}: ${WEAPON_INFO.ping.desc}`, { isResponse: true }));
+        } else if (topic === "nmap") {
+          responses.push(entry(`[INFO] ${WEAPON_INFO.nmap.fullName}: ${WEAPON_INFO.nmap.desc}`, { isResponse: true }));
+        } else if (topic === "metasploit" || topic === "msploit" || topic === "meta") {
+          responses.push(entry(`[INFO] ${WEAPON_INFO.meta.fullName}: ${WEAPON_INFO.meta.desc}`, { isResponse: true }));
+        } else {
+          // Try enemy names
+          const enemyMatch = Object.keys(ENEMY_INFO).find(e => e.toLowerCase() === topic || e.toLowerCase().includes(topic));
+          if (enemyMatch) {
+            responses.push(entry(`[INFO] ${enemyMatch}: ${ENEMY_INFO[enemyMatch]}`, { isResponse: true }));
+          } else {
+            // Try zone names
+            const zoneMatch = Object.keys(ZONE_INFO).find(z => z.toLowerCase() === topic || z.toLowerCase().includes(topic));
+            if (zoneMatch) {
+              responses.push(entry(`[INFO] ${zoneMatch}: ${ZONE_INFO[zoneMatch]}`, { isResponse: true }));
+            } else {
+              responses.push(entry(`[ERR] Unknown topic: "${arg}". Try: ping, nmap, metasploit, or an enemy/zone name`, { isResponse: true }));
+            }
+          }
+        }
+      } else if (base === "whoami") {
+        const rank = getRank(state.level);
+        responses.push(entry(`[SYS] Rank: ${rank} | Zone: ${state.level + 1}/${NUM_LEVELS} | Kills: ${state.kills}`, { isResponse: true }));
+      } else if (cmd === "") {
+        return state;
+      } else {
+        responses.push(entry(`[ERR] Command not found: "${base}". Type "help" for available commands.`, { isResponse: true }));
+      }
+
+      return { ...state, combatLog: addLog(state, ...responses) };
+    }
 
     default:
       return state;
@@ -426,6 +520,7 @@ export function useGameState() {
   useEffect(() => {
     if (state.phase !== "battle" || state.locked) return;
     const handler = (e: KeyboardEvent) => {
+      if ((e.target as HTMLElement)?.tagName === "INPUT") return;
       if (e.key === "1") dispatch({ type: "ATTACK", weapon: "ping" });
       else if (e.key === "2") dispatch({ type: "ATTACK", weapon: "nmap" });
       else if (e.key === "3") dispatch({ type: "ATTACK", weapon: "meta" });
@@ -442,6 +537,7 @@ export function useGameState() {
   const enterZone = useCallback(() => dispatch({ type: "ENTER_ZONE" }), []);
   const playAgain = useCallback(() => dispatch({ type: "PLAY_AGAIN" }), []);
   const goToMenu = useCallback(() => dispatch({ type: "GO_TO_MENU" }), []);
+  const runCommand = useCallback((command: string) => dispatch({ type: "TERMINAL_CMD", command }), []);
 
-  return { state, attack, startGame, enterZone, playAgain, goToMenu };
+  return { state, attack, startGame, enterZone, playAgain, goToMenu, runCommand };
 }

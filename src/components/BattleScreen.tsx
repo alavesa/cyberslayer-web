@@ -1,7 +1,7 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import { Crosshair, Radar, Bug, Heart, Shield, Skull, Zap, Lock, RefreshCw, Shuffle } from "lucide-react";
 import { NUM_LEVELS, LEVELS, ENEMY_ART, ENEMY_INFO, ZONE_INFO, WEAPON_INFO, DIFFICULTY_MODS } from "@/lib/gameEngine";
-import type { GameState } from "@/hooks/useGameState";
+import type { GameState, LogEntry } from "@/hooks/useGameState";
 import type { Weapon, Special } from "@/lib/gameEngine";
 import ZoneProgress from "./ZoneProgress";
 import FloatingDamage from "./FloatingDamage";
@@ -26,10 +26,31 @@ interface BattleScreenProps {
   attack: (weapon: Weapon) => void;
   enterZone?: () => void;
   goToMenu?: () => void;
+  runCommand?: (command: string) => void;
 }
 
-export default function BattleScreen({ state, attack, enterZone, goToMenu }: BattleScreenProps) {
+export default function BattleScreen({ state, attack, enterZone, goToMenu, runCommand }: BattleScreenProps) {
   const logRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [cmdInput, setCmdInput] = useState("");
+  const [activeTooltip, setActiveTooltip] = useState<{ index: number; text: string } | null>(null);
+
+  const handleCommand = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && cmdInput.trim() && runCommand) {
+      e.preventDefault();
+      e.stopPropagation();
+      runCommand(cmdInput);
+      setCmdInput("");
+    }
+  }, [cmdInput, runCommand]);
+
+  // Dismiss tooltip on click outside
+  useEffect(() => {
+    if (!activeTooltip) return;
+    const dismiss = () => setActiveTooltip(null);
+    window.addEventListener("click", dismiss);
+    return () => window.removeEventListener("click", dismiss);
+  }, [activeTooltip]);
 
   const prevTriggerRef = useRef(0);
 
@@ -483,24 +504,66 @@ export default function BattleScreen({ state, attack, enterZone, goToMenu }: Bat
               aria-label="Combat log"
               className="h-36 sm:h-40 overflow-y-auto space-y-0.5 font-terminal text-xs sm:text-sm scrollbar-thin"
             >
-              {state.combatLog.map((msg, i) => (
-                <p
-                  key={i}
-                  className={`log-entry ${
-                    msg.includes("CRITICAL") ? "text-accent glow-yellow font-bold" :
-                    msg.includes("destroyed") || msg.includes("SECURED") ? "text-primary glow-green font-bold" :
-                    msg.includes("attacks") || msg.includes("COMPROMISED") ? "text-destructive glow-red" :
-                    msg.includes("encrypted") || msg.includes("halved") ? "text-secondary glow-pink" :
-                    msg.includes("adapted") || msg.includes("reduced") ? "text-secondary" :
-                    msg.includes("Healed") || msg.includes("+") ? "text-green-400" :
-                    msg.includes("appeared") || msg.includes("Entering") ? "text-cyan-400" :
-                    "text-muted-foreground"
-                  }`}
-                >
-                  <span className="text-primary/40">$</span> {msg}
-                </p>
-              ))}
+              {state.combatLog.map((msg, i) => {
+                const animClass =
+                  msg.animation === "crit" ? "log-anim-crit" :
+                  msg.animation === "damage" ? "log-anim-damage" :
+                  msg.animation === "death" ? "log-anim-death" :
+                  msg.animation === "system" ? "log-anim-system" : "";
+
+                const colorClass =
+                  msg.isCommand ? "text-cyan-400" :
+                  msg.isResponse ? "text-muted-foreground/90" :
+                  msg.text.includes("CRITICAL") ? "text-accent glow-yellow font-bold" :
+                  msg.text.includes("destroyed") || msg.text.includes("SECURED") ? "text-primary glow-green font-bold" :
+                  msg.text.includes("attacks") || msg.text.includes("COMPROMISED") ? "text-destructive glow-red" :
+                  msg.text.includes("encrypted") || msg.text.includes("halved") ? "text-secondary glow-pink" :
+                  msg.text.includes("adapted") || msg.text.includes("reduced") ? "text-secondary" :
+                  msg.text.includes("Healed") || msg.text.includes("+") ? "text-green-400" :
+                  msg.text.includes("appeared") || msg.text.includes("Entering") ? "text-cyan-400" :
+                  "text-muted-foreground";
+
+                const prefix = msg.isCommand ? "" : msg.isResponse ? "" : "$ ";
+
+                return (
+                  <p
+                    key={i}
+                    className={`log-entry ${colorClass} ${animClass} ${msg.tooltip ? "cursor-pointer hover:underline decoration-dotted" : ""}`}
+                    onClick={msg.tooltip ? (e) => {
+                      e.stopPropagation();
+                      setActiveTooltip(activeTooltip?.index === i ? null : { index: i, text: msg.tooltip! });
+                    } : undefined}
+                  >
+                    {prefix && <span className="text-primary/40">{prefix}</span>}
+                    {msg.text}
+                    {msg.tooltip && <span className="text-muted-foreground/40 ml-1 text-[10px]">[?]</span>}
+                    {activeTooltip?.index === i && (
+                      <span className="block mt-1 mb-1 px-2 py-1.5 bg-muted/60 border border-border/40 text-xs text-muted-foreground leading-snug log-anim-tooltip">
+                        {activeTooltip.text}
+                      </span>
+                    )}
+                  </p>
+                );
+              })}
             </div>
+
+            {/* Terminal input */}
+            {state.phase === "battle" && runCommand && (
+              <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-border/20">
+                <span className="text-primary/60 text-xs shrink-0">$</span>
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={cmdInput}
+                  onChange={(e) => setCmdInput(e.target.value)}
+                  onKeyDown={handleCommand}
+                  placeholder='type "help" for commands...'
+                  className="flex-1 bg-transparent text-xs font-terminal text-muted-foreground outline-none placeholder:text-muted-foreground/30 caret-primary"
+                  autoComplete="off"
+                  spellCheck={false}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>
