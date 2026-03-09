@@ -2,6 +2,8 @@
 
 A turn-based cybersecurity combat game built for the browser. Breach 10 corporate network zones, exploit enemy weaknesses, and secure the network. Inspired by the badge game https://github.com/alavesa/cyberslayer
 
+**Play now: [https://cyberslayer.win/](https://cyberslayer.win/)**
+
 ## Gameplay
 
 You are a **network operator** infiltrating a compromised corporate network. Your mission: breach 10 zones, eliminate the cyber threats within, and secure the network. Each zone contains a progressively more dangerous threat — from Script Kiddies to Advanced Persistent Threats. Choose your attacks wisely:
