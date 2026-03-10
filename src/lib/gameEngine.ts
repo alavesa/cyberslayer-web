@@ -125,13 +125,20 @@ const HINTS_META = [
   "Someone forgot to patch.",
 ];
 
-const pick = <T>(arr: T[]) => arr[Math.floor(Math.random() * arr.length)];
+let lastHint = "";
+
+function pickHint(arr: string[]): string {
+  const options = arr.length > 1 ? arr.filter(h => h !== lastHint) : arr;
+  const hint = options[Math.floor(Math.random() * options.length)];
+  lastHint = hint;
+  return hint;
+}
 
 export function getWeaknessHint(weakness: Weapon): string {
   switch (weakness) {
-    case "ping": return pick(HINTS_PING);
-    case "nmap": return pick(HINTS_NMAP);
-    case "meta": return pick(HINTS_META);
+    case "ping": return pickHint(HINTS_PING);
+    case "nmap": return pickHint(HINTS_NMAP);
+    case "meta": return pickHint(HINTS_META);
   }
 }
 
