@@ -38,6 +38,20 @@ You are a **network operator** infiltrating a compromised corporate network. You
 
 Or tap/click the attack buttons. Fully playable on mobile.
 
+### Terminal Commands
+
+Type commands in the terminal input during battle:
+
+| Command | Description |
+|---------|-------------|
+| `help` | List available commands |
+| `scan` | Show current enemy stats and weakness |
+| `status` | Show player HP, shield, ammo |
+| `info <topic>` | Look up weapons, enemies, or zones |
+| `whoami` | Show rank and progress |
+
+Plus hidden easter eggs — try common Linux commands for surprises.
+
 ### Difficulty Modes
 
 | Mode | Player HP | Enemy HP | Enemy ATK |
@@ -56,11 +70,17 @@ Or tap/click the attack buttons. Fully playable on mobile.
 - Screen shake on critical hits and taking damage
 - Synthesized retro sound effects (Web Audio API — no audio files)
 - CRT scanlines, terminal grid, and glow effects
-- Scrollable combat log with color-coded messages
+- Interactive combat terminal with command input (`help`, `scan`, `status`, `info`, `whoami`)
+- Terminal easter eggs — try `sudo`, `vim`, `coffee`, `rm -rf /`, and more
+- Tap-to-learn tooltips on combat log entries (weapons, enemies, zones, specials)
+- Inline log animations (crit flash, damage slide, death shake, system reveal)
 - VS badge overlay during battle phase
-- Per-zone weakness tracking on end screen
-- Tiered defeat screens (5 tiers) with cybersecurity tips and tactical advice
+- Per-zone weakness tracking on end screen (tappable lights link to zone details)
+- Tiered defeat screens (5 tiers) with cybersecurity tips, tactical advice, and humor
+- Random victory and defeat quips
+- Sarcastic wisdom quotes from the Oracle
 - Educational info about real-world threats and network zones
+- Content Security Policy and localStorage validation
 
 ## Tech Stack
 
