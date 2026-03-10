@@ -103,9 +103,9 @@ export function getRandomWisdom(): string {
 
 export function getWeaknessHint(weakness: Weapon): string {
   switch (weakness) {
-    case "ping": return "Trace the network!";
-    case "nmap": return "Scan its ports!";
-    case "meta": return "Exploit it!";
+    case "ping": return "It responds to echoes.";
+    case "nmap": return "Its ports are showing.";
+    case "meta": return "It has an unpatched flaw.";
   }
 }
 
