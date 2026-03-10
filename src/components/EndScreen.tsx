@@ -11,11 +11,45 @@ interface EndScreenProps {
   goToMenu: () => void;
 }
 
+function pick<T>(arr: T[]): T { return arr[Math.floor(Math.random() * arr.length)]; }
+
+const VICTORY_QUIPS = [
+  "Time to update your LinkedIn to 'Ethical Hacker'.",
+  "Network secured! Your reward: another compliance audit.",
+  "You did it! Now do the mandatory security training anyway.",
+  "The CISO is buying you coffee. Decaf, budget cuts.",
+  "Achievement unlocked: Not Getting Fired.",
+];
+
+const DEFEAT_QUIPS: Record<string, string[]> = {
+  gate: [
+    "You got hacked by someone who learned from YouTube.",
+    "The Script Kiddie is updating their blog about this.",
+  ],
+  dmz: [
+    "The DMZ was a hostile place. Who knew?",
+    "Even the firewall felt sorry for you.",
+  ],
+  deep: [
+    "IT security wants a word with you.",
+    "At least you made it past the intern's laptop.",
+  ],
+  almost: [
+    "So close! The APT sends its regards. And a phishing email.",
+    "You almost had it. 'Almost' doesn't patch vulnerabilities.",
+  ],
+  final: [
+    "The APT is now using your attack as a case study.",
+    "One more hit would've done it. The APT is laughing.",
+  ],
+};
+
 // Defeat tiers based on how far the player got
 function getDefeatTier(level: number) {
   if (level === 0) return {
     label: "INTERCEPTED AT THE GATE",
     subtitle: "The perimeter defenses held you back.",
+    quip: pick(DEFEAT_QUIPS.gate),
     emoji: "◈",
     color: "text-destructive",
     glow: "glow-red",
@@ -26,6 +60,7 @@ function getDefeatTier(level: number) {
   if (level <= 2) return {
     label: "CAUGHT IN THE DMZ",
     subtitle: "You breached the outer layers but couldn't go deeper.",
+    quip: pick(DEFEAT_QUIPS.dmz),
     emoji: "◈◈",
     color: "text-orange-400",
     glow: "glow-yellow",
@@ -36,6 +71,7 @@ function getDefeatTier(level: number) {
   if (level <= 5) return {
     label: "DEEP BREACH DETECTED",
     subtitle: "You infiltrated the core network before being caught.",
+    quip: pick(DEFEAT_QUIPS.deep),
     emoji: "◈◈◈",
     color: "text-accent",
     glow: "glow-yellow",
@@ -46,6 +82,7 @@ function getDefeatTier(level: number) {
   if (level <= 8) return {
     label: "ALMOST THERE",
     subtitle: "The core router was within reach...",
+    quip: pick(DEFEAT_QUIPS.almost),
     emoji: "◈◈◈◈",
     color: "text-secondary",
     glow: "glow-pink",
@@ -56,6 +93,7 @@ function getDefeatTier(level: number) {
   return {
     label: "ONE STEP FROM VICTORY",
     subtitle: "The APT proved too resilient at the final gate.",
+    quip: pick(DEFEAT_QUIPS.final),
     emoji: "◈◈◈◈◈",
     color: "text-primary",
     glow: "glow-green",
@@ -97,6 +135,7 @@ const DEFEAT_FRAMES = [
 
 export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps) {
   const wisdom = useMemo(() => getRandomWisdom(), []);
+  const victoryQuip = useMemo(() => pick(VICTORY_QUIPS), []);
   const rank = getRank(state.level);
   const [expandedZone, setExpandedZone] = useState<number | null>(null);
   const [legendTooltip, setLegendTooltip] = useState<"weakness" | "brute" | null>(null);
@@ -187,6 +226,9 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
                   </span>
                 ))}
               </div>
+              <p className="font-terminal text-xs text-primary/50 mt-3 italic">
+                {victoryQuip}
+              </p>
             </>
           ) : defeatTier && (
             <>
@@ -203,6 +245,9 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
               />
               <p className="font-terminal text-sm text-muted-foreground mt-2">
                 {defeatTier.subtitle}
+              </p>
+              <p className="font-terminal text-xs text-muted-foreground/50 mt-1 italic">
+                {defeatTier.quip}
               </p>
               {/* Progress visualization */}
               <div className="mt-4 flex justify-center items-center gap-0.5">

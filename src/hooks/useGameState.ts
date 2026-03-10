@@ -1,6 +1,6 @@
 import { useReducer, useCallback, useEffect } from "react";
 import {
-  PLAYER_START_HP, NMAP_START, META_START, NUM_LEVELS,
+  PLAYER_START_HP, NMAP_START, META_START, NUM_LEVELS, DMG_PING,
   LEVELS, calculateDamage, enemyTurn, applyLoot, getWeaknessHint,
   DIFFICULTY_MODS, WEAPON_INFO, ENEMY_INFO, ZONE_INFO, getRank,
   type Weapon, type Special, type Difficulty,
@@ -107,6 +107,34 @@ const ENCRYPT_TOOLTIP = "Encryption scrambles your attack data, reducing effecti
 const REPLICATE_TOOLTIP = "Self-replicating malware creates copies to amplify its attack power.";
 const ADAPT_TOOLTIP = "Advanced Persistent Threats learn from repeated attacks. Vary your weapons!";
 
+function pick<T>(arr: T[]): T { return arr[Math.floor(Math.random() * arr.length)]; }
+
+const FLAVOR_LOW_DMG = ["Barely a scratch. The enemy yawns.", "That tickled. Try harder."];
+const FLAVOR_OVERKILL = ["That was like using Metasploit on a calculator.", "Overkill. The enemy didn't deserve that. Well, maybe."];
+const FLAVOR_ENCRYPT = ["Your weapons now require a 30-character password."];
+const FLAVOR_REPLICATE = ["It copied itself. Ctrl+C Ctrl+V energy."];
+
+const EASTER_EGGS: Record<string, string> = {
+  "sudo": "Nice try. Root access denied.",
+  "rm -rf /": "Whoa there, we're trying to SAVE the network.",
+  "rm -rf": "Whoa there, we're trying to SAVE the network.",
+  "exit": "There is no escape. Only more packets.",
+  "quit": "There is no escape. Only more packets.",
+  "hack": "That's... what we're already doing?",
+  "coffee": "Brewing... +0 HP. It's the thought that counts.",
+  "hello": "The network doesn't care about your manners.",
+  "hi": "The network doesn't care about your manners.",
+  "ls": "You see: packets, packets, and more packets.",
+  "cd": "You can't leave. The firewall is behind you.",
+  "vim": "You've opened vim. Good luck getting out.",
+  "emacs": "Ah, a person of culture. Still no help here though.",
+  "clear": "Your conscience? Can't help with that.",
+  "ping 127.0.0.1": "Pinging yourself? Bold strategy.",
+  "ping localhost": "Pinging yourself? Bold strategy.",
+  "git push --force": "To production? On a Friday? Absolutely not.",
+  "rm -rf /*": "NICE TRY. Access denied. Forever.",
+};
+
 function entry(text: string, opts?: Partial<Omit<LogEntry, "text">>): LogEntry {
   return { text, ...opts };
 }
@@ -166,10 +194,10 @@ function gameReducer(state: GameState, action: Action): GameState {
 
       // Ammo check
       if (weapon === "nmap" && state.nmapAmmo <= 0) {
-        return { ...state, combatLog: addLog(state, entry("No Nmap ammo left!")) };
+        return { ...state, combatLog: addLog(state, entry("No Nmap ammo! Your subscription expired.")) };
       }
       if (weapon === "meta" && state.metaAmmo <= 0) {
-        return { ...state, combatLog: addLog(state, entry("No Metasploit ammo left!")) };
+        return { ...state, combatLog: addLog(state, entry("No Metasploit ammo! Budget cuts hit hard.")) };
       }
 
       // Deduct ammo
@@ -196,9 +224,18 @@ function gameReducer(state: GameState, action: Action): GameState {
         tooltip: ADAPT_TOOLTIP,
       }));
 
+      // Flavor text for low damage or overkill
+      if (result.damage < DMG_PING && !result.isCrit) {
+        entries.push(entry(pick(FLAVOR_LOW_DMG), { isResponse: true }));
+      }
+
       const newEnemyHP = Math.max(0, state.enemyHP - result.damage);
       const turnCount = state.turnCount + 1;
       const hitWeakness = state.usedWeaknessThisZone || result.isCrit;
+
+      if (newEnemyHP <= 0 && result.damage > state.enemyHP * 2) {
+        entries.push(entry(pick(FLAVOR_OVERKILL), { isResponse: true }));
+      }
 
       // Enemy killed
       if (newEnemyHP <= 0) {
@@ -279,14 +316,16 @@ function gameReducer(state: GameState, action: Action): GameState {
       // Enemy survives — enemy turn
       const eTurn = enemyTurn(state.enemyAtk, state.enemySpecial, turnCount, state.shield);
 
-      if (eTurn.replicated) entries.push(entry("Worm replicated! Extra dmg!", {
-        tooltip: REPLICATE_TOOLTIP,
-      }));
+      if (eTurn.replicated) {
+        entries.push(entry("Worm replicated! Extra dmg!", { tooltip: REPLICATE_TOOLTIP }));
+        entries.push(entry(pick(FLAVOR_REPLICATE), { isResponse: true }));
+      }
       entries.push(entry(`${state.enemyName} attacks for ${eTurn.damage}!`, { animation: "damage" }));
       if (eTurn.absorbed > 0) entries.push(entry(`Shield absorbed ${eTurn.absorbed} dmg`));
-      if (eTurn.encrypted) entries.push(entry("Weapons encrypted! Next attack halved!", {
-        tooltip: ENCRYPT_TOOLTIP,
-      }));
+      if (eTurn.encrypted) {
+        entries.push(entry("Weapons encrypted! Next attack halved!", { tooltip: ENCRYPT_TOOLTIP }));
+        entries.push(entry(pick(FLAVOR_ENCRYPT), { isResponse: true }));
+      }
 
       const newPlayerHP = state.playerHP - eTurn.hpDamage;
       const newShield = state.shield - eTurn.absorbed;
@@ -457,6 +496,8 @@ function gameReducer(state: GameState, action: Action): GameState {
         responses.push(entry(`[SYS] Rank: ${rank} | Zone: ${state.level + 1}/${NUM_LEVELS} | Kills: ${state.kills}`, { isResponse: true }));
       } else if (cmd === "") {
         return state;
+      } else if (EASTER_EGGS[cmd] || EASTER_EGGS[base]) {
+        responses.push(entry(EASTER_EGGS[cmd] || EASTER_EGGS[base], { isResponse: true }));
       } else {
         responses.push(entry(`[ERR] Command not found: "${base}". Type "help" for available commands.`, { isResponse: true }));
       }

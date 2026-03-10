@@ -86,6 +86,13 @@ export const WISDOMS: string[] = [
   "There are no secure systems. Only untested ones.",
   "Social engineering bypasses all firewalls.",
   "The log file knows the truth.",
+  "The real zero-day was the friends we made along the way.",
+  "Have you tried turning the firewall off and on again?",
+  "In a world of zero-days, be a patch Tuesday.",
+  "404: Wisdom not found. Try again after reboot.",
+  "Your password is 'password123'? Bold choice.",
+  "The cloud is just someone else's computer having a bad day.",
+  "Roses are red, violets are blue, your port is open, and so is 22.",
 ];
 
 export function getRandomWisdom(): string {
