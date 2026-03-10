@@ -3,7 +3,7 @@ import type { GameState } from "@/hooks/useGameState";
 import ZoneProgress from "./ZoneProgress";
 import MuteButton from "./MuteButton";
 import ScaledArt from "./ScaledArt";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 interface EndScreenProps {
   state: GameState;
@@ -99,7 +99,16 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
   const wisdom = useMemo(() => getRandomWisdom(), []);
   const rank = getRank(state.level);
   const [expandedZone, setExpandedZone] = useState<number | null>(null);
+  const [legendTooltip, setLegendTooltip] = useState<"weakness" | "brute" | null>(null);
   const [artFrame, setArtFrame] = useState(0);
+  const zoneRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  const handleZoneClick = useCallback((zoneIndex: number) => {
+    setExpandedZone(expandedZone === zoneIndex ? null : zoneIndex);
+    setTimeout(() => {
+      zoneRefs.current[zoneIndex]?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }, 50);
+  }, [expandedZone]);
 
   useEffect(() => {
     const timer = setInterval(() => setArtFrame((f) => (f + 1) % 2), 800);
@@ -246,18 +255,34 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
               victory={state.victory}
               defeat={!state.victory}
               zoneCrits={state.zoneCrits}
+              onZoneClick={handleZoneClick}
             />
           </div>
           {state.zoneCrits.length > 0 && (
-            <div className="flex items-center justify-center gap-4 pt-2 font-terminal text-[11px]">
-              <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 bg-primary/60 border border-primary/50 inline-block" />
-                <span className="text-muted-foreground">Weakness used</span>
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 bg-orange-500/50 border border-orange-400/40 inline-block" />
-                <span className="text-muted-foreground">Brute forced</span>
-              </span>
+            <div className="pt-2">
+              <div className="flex items-center justify-center gap-4 font-terminal text-[11px]">
+                <button
+                  onClick={() => setLegendTooltip(legendTooltip === "weakness" ? null : "weakness")}
+                  className="flex items-center gap-1.5 min-h-[44px] px-2 hover:bg-muted/20 transition-colors cursor-pointer"
+                >
+                  <span className="w-2.5 h-2.5 bg-primary/60 border border-primary/50 inline-block" />
+                  <span className={`${legendTooltip === "weakness" ? "text-primary underline" : "text-muted-foreground"}`}>Weakness used</span>
+                </button>
+                <button
+                  onClick={() => setLegendTooltip(legendTooltip === "brute" ? null : "brute")}
+                  className="flex items-center gap-1.5 min-h-[44px] px-2 hover:bg-muted/20 transition-colors cursor-pointer"
+                >
+                  <span className="w-2.5 h-2.5 bg-orange-400/80 border border-orange-300/60 inline-block" />
+                  <span className={`${legendTooltip === "brute" ? "text-orange-400 underline" : "text-muted-foreground"}`}>Brute forced</span>
+                </button>
+              </div>
+              {legendTooltip && (
+                <div className="mt-1 mx-2 px-3 py-2 bg-muted/20 border border-border/30 font-terminal text-xs text-muted-foreground leading-relaxed animate-slide-down">
+                  {legendTooltip === "weakness"
+                    ? "Exploiting a known vulnerability is the most efficient attack vector. In real penetration testing, reconnaissance reveals which tools and techniques are most effective against specific targets — just like using the right weapon against an enemy's weakness."
+                    : "Brute forcing means overpowering a target without exploiting a specific weakness. It works, but costs more resources. In cybersecurity, brute-force attacks try every possible combination — slower and noisier than targeted exploits."}
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -294,7 +319,7 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
           </p>
 
           {breachedZones.map((lvl, i) => (
-            <div key={i} className="mb-2">
+            <div key={i} className="mb-2" ref={(el) => { zoneRefs.current[i] = el; }}>
               <button
                 onClick={() => setExpandedZone(expandedZone === i ? null : i)}
                 aria-expanded={expandedZone === i}

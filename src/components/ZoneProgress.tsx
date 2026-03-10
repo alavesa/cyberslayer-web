@@ -6,6 +6,7 @@ interface ZoneProgressProps {
   zoneCrits?: boolean[];
   lastAttackCrit?: boolean;
   lastAttackTrigger?: number;
+  onZoneClick?: (zoneIndex: number) => void;
 }
 
 export default function ZoneProgress({
@@ -16,6 +17,7 @@ export default function ZoneProgress({
   zoneCrits = [],
   lastAttackCrit,
   lastAttackTrigger,
+  onZoneClick,
 }: ZoneProgressProps) {
   return (
     <div className="flex items-center gap-1">
@@ -66,29 +68,35 @@ export default function ZoneProgress({
 
         // Cleared zones: green if weakness exploited, orange/red if not
         if (cleared) {
-          if (usedWeakness === true) {
+          const baseClass = "w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 border";
+          const clickClass = onZoneClick ? " cursor-pointer hover:scale-125 transition-transform" : "";
+          const colorClass = usedWeakness === true
+            ? " bg-primary/60 border-primary/50"
+            : usedWeakness === false
+              ? " bg-orange-400/80 border-orange-300/60"
+              : " bg-cyber-green/50 border-cyber-green/40";
+          const shadow = usedWeakness === true
+            ? "0 0 5px hsl(160, 100%, 50%, 0.4)"
+            : usedWeakness === false
+              ? "0 0 4px hsl(30, 100%, 55%, 0.5)"
+              : "0 0 4px hsl(160, 100%, 50%, 0.3)";
+
+          if (onZoneClick) {
             return (
-              <div
+              <button
                 key={i}
-                className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 border bg-primary/60 border-primary/50"
-                style={{ boxShadow: "0 0 5px hsl(160, 100%, 50%, 0.4)" }}
+                onClick={() => onZoneClick(i)}
+                className={baseClass + colorClass + clickClass}
+                style={{ boxShadow: shadow }}
+                aria-label={`Zone ${i + 1}`}
               />
             );
           }
-          if (usedWeakness === false) {
-            return (
-              <div
-                key={i}
-                className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 border bg-orange-500/50 border-orange-400/40"
-                style={{ boxShadow: "0 0 4px hsl(30, 90%, 50%, 0.3)" }}
-              />
-            );
-          }
-          // No crit data available (fallback)
           return (
             <div
               key={i}
-              className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 border bg-cyber-green/50 border-cyber-green/40 shadow-[0_0_4px_hsl(160,100%,50%,0.3)]"
+              className={baseClass + colorClass}
+              style={{ boxShadow: shadow }}
             />
           );
         }
