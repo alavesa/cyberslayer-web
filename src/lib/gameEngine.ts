@@ -101,11 +101,37 @@ export function getRandomWisdom(): string {
 
 // ─── Hint Text ───────────────────────────────────────────────────────────────
 
+const HINTS_PING = [
+  "It responds to echoes.",
+  "A simple request might reach it.",
+  "Try knocking on the door.",
+  "It's listening for a heartbeat.",
+  "The most basic probe could work.",
+];
+
+const HINTS_NMAP = [
+  "Its ports are showing.",
+  "Something's running on an open port.",
+  "A careful scan would reveal its weakness.",
+  "Its services are poorly hidden.",
+  "Map the attack surface.",
+];
+
+const HINTS_META = [
+  "It has an unpatched flaw.",
+  "There's a known exploit for this.",
+  "Its defenses have a hole.",
+  "A framework could crack this open.",
+  "Someone forgot to patch.",
+];
+
+const pick = <T>(arr: T[]) => arr[Math.floor(Math.random() * arr.length)];
+
 export function getWeaknessHint(weakness: Weapon): string {
   switch (weakness) {
-    case "ping": return "It responds to echoes.";
-    case "nmap": return "Its ports are showing.";
-    case "meta": return "It has an unpatched flaw.";
+    case "ping": return pick(HINTS_PING);
+    case "nmap": return pick(HINTS_NMAP);
+    case "meta": return pick(HINTS_META);
   }
 }
 
