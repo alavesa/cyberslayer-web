@@ -115,7 +115,7 @@ const FLAVOR_ENCRYPT = ["Your weapons now require a 30-character password."];
 const FLAVOR_REPLICATE = ["It copied itself. Ctrl+C Ctrl+V energy."];
 
 const EASTER_EGGS: Record<string, string> = {
-  "sudo": "Nice try. Root access denied.",
+  "sudo": "You already have root. Try not to break anything.",
   "rm -rf /": "Whoa there, we're trying to SAVE the network.",
   "rm -rf": "Whoa there, we're trying to SAVE the network.",
   "exit": "There is no escape. Only more packets.",
