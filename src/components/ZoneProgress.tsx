@@ -26,18 +26,34 @@ export default function ZoneProgress({
         const current = i === currentLevel && !victory && !defeat;
         const usedWeakness = zoneCrits[i];
 
-        // Victory: rainbow colors with staggered animation
+        // Victory: show weakness tracking with celebratory glow
         if (victory) {
-          const hue = (i / totalLevels) * 360;
+          const baseClass = "w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 border zone-light-rainbow";
+          const clickClass = onZoneClick ? " cursor-pointer hover:scale-125 transition-transform" : "";
+          const isWeak = usedWeakness === true;
+          const colorClass = isWeak
+            ? " bg-primary/80 border-primary/60"
+            : " bg-orange-400/90 border-orange-300/70";
+          const shadow = isWeak
+            ? `0 0 8px hsl(160, 100%, 50%, 0.7), 0 0 16px hsl(160, 100%, 50%, 0.3)`
+            : `0 0 8px hsl(30, 100%, 55%, 0.7), 0 0 16px hsl(30, 100%, 55%, 0.3)`;
+
+          if (onZoneClick) {
+            return (
+              <button
+                key={i}
+                onClick={() => onZoneClick(i)}
+                className={baseClass + colorClass + clickClass}
+                style={{ boxShadow: shadow, animationDelay: `${i * 0.15}s` }}
+                aria-label={`Zone ${i + 1}`}
+              />
+            );
+          }
           return (
             <div
               key={i}
-              className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 border border-white/30 zone-light-rainbow"
-              style={{
-                backgroundColor: `hsl(${hue}, 85%, 55%)`,
-                boxShadow: `0 0 8px hsl(${hue}, 85%, 55%, 0.7), 0 0 16px hsl(${hue}, 85%, 55%, 0.3)`,
-                animationDelay: `${i * 0.15}s`,
-              }}
+              className={baseClass + colorClass}
+              style={{ boxShadow: shadow, animationDelay: `${i * 0.15}s` }}
             />
           );
         }
