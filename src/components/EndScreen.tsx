@@ -370,13 +370,14 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
                 aria-expanded={expandedZone === i}
                 className="w-full text-left bg-muted/20 px-3 py-2 border border-border/20 hover:border-primary/30 transition-colors cursor-pointer group"
               >
-                <div className="flex justify-between items-center">
-                  <span className="font-terminal text-sm text-primary/90 flex items-center gap-2">
-                    {i + 1}. {lvl.zone}
-                    <span className={`text-[11px] transition-transform duration-200 ${expandedZone === i ? "rotate-90" : ""} text-primary/50 group-hover:text-primary/80`}>▶</span>
+                <div className="flex justify-between items-center gap-2 min-w-0">
+                  <span className="font-terminal text-sm text-primary/90 flex items-center gap-1 min-w-0">
+                    <span className="shrink-0">{i + 1}.</span>
+                    <span className="truncate">{lvl.zone}</span>
+                    <span className={`text-[11px] shrink-0 transition-transform duration-200 ${expandedZone === i ? "rotate-90" : ""} text-primary/50 group-hover:text-primary/80`}>▶</span>
                   </span>
-                  <span className="font-terminal text-sm text-secondary/80">
-                    vs {lvl.enemy} ✓
+                  <span className="font-terminal text-xs sm:text-sm text-secondary/80 shrink-0">
+                    {lvl.enemy} ✓
                   </span>
                 </div>
               </button>
