@@ -136,18 +136,26 @@ const DEFEAT_FRAMES = [
 export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps) {
   const wisdom = useMemo(() => getRandomWisdom(), []);
   const victoryQuip = useMemo(() => pick(VICTORY_QUIPS), []);
-  const rank = getRank(state.level);
+  const rank = useMemo(() => getRank(state.level), [state.level]);
   const [expandedZone, setExpandedZone] = useState<number | null>(null);
   const [legendTooltip, setLegendTooltip] = useState<"weakness" | "brute" | null>(null);
   const [artFrame, setArtFrame] = useState(0);
   const zoneRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleZoneClick = useCallback((zoneIndex: number) => {
     setExpandedZone(expandedZone === zoneIndex ? null : zoneIndex);
-    setTimeout(() => {
+    if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+    scrollTimerRef.current = setTimeout(() => {
       zoneRefs.current[zoneIndex]?.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }, 50);
   }, [expandedZone]);
+
+  useEffect(() => {
+    return () => {
+      if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => setArtFrame((f) => (f + 1) % 2), 800);
@@ -159,32 +167,36 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
   // The zone they died on (if defeat)
   const failedZone = !state.victory && state.level < NUM_LEVELS ? LEVELS[state.level] : null;
   // Defeat tier messaging
-  const defeatTier = !state.victory ? getDefeatTier(state.level) : null;
+  const defeatTier = useMemo(() => !state.victory ? getDefeatTier(state.level) : null, [state.victory, state.level]);
+
+  const confettiElements = useMemo(() => (
+    Array.from({ length: 24 }, (_, i) => (
+      <div
+        key={i}
+        className="absolute animate-confetti"
+        style={{
+          left: `${(i * 4.3) % 100}%`,
+          animationDelay: `${(i * 0.2) % 2}s`,
+          animationDuration: `${2.5 + (i % 3) * 0.8}s`,
+        }}
+      >
+        <div
+          className="w-2 h-2"
+          style={{
+            background: ['hsl(160 100% 50%)', 'hsl(320 100% 60%)', 'hsl(50 100% 55%)', 'hsl(200 100% 55%)'][i % 4],
+            transform: `rotate(${i * 37}deg)`,
+          }}
+        />
+      </div>
+    ))
+  ), []);
 
   return (
     <div className="min-h-[100dvh] bg-background flex flex-col items-center justify-start sm:justify-center p-3 sm:p-4 relative overflow-hidden terminal-grid scanlines crt-glow">
       {/* Victory particle effects */}
       {state.victory && (
         <div className="fixed inset-0 pointer-events-none z-20 overflow-hidden">
-          {Array.from({ length: 24 }, (_, i) => (
-            <div
-              key={i}
-              className="absolute animate-confetti"
-              style={{
-                left: `${(i * 4.3) % 100}%`,
-                animationDelay: `${(i * 0.2) % 2}s`,
-                animationDuration: `${2.5 + (i % 3) * 0.8}s`,
-              }}
-            >
-              <div
-                className="w-2 h-2"
-                style={{
-                  background: ['hsl(160 100% 50%)', 'hsl(320 100% 60%)', 'hsl(50 100% 55%)', 'hsl(200 100% 55%)'][i % 4],
-                  transform: `rotate(${i * 37}deg)`,
-                }}
-              />
-            </div>
-          ))}
+          {confettiElements}
         </div>
       )}
 
@@ -308,6 +320,7 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
               <div className="flex items-center justify-center gap-4 font-terminal text-[11px]">
                 <button
                   onClick={() => setLegendTooltip(legendTooltip === "weakness" ? null : "weakness")}
+                  aria-expanded={legendTooltip === "weakness"}
                   className="flex items-center gap-1.5 min-h-[44px] px-2 hover:bg-muted/20 transition-colors cursor-pointer"
                 >
                   <span className="w-2.5 h-2.5 bg-primary/60 border border-primary/50 inline-block" />
@@ -315,6 +328,7 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
                 </button>
                 <button
                   onClick={() => setLegendTooltip(legendTooltip === "brute" ? null : "brute")}
+                  aria-expanded={legendTooltip === "brute"}
                   className="flex items-center gap-1.5 min-h-[44px] px-2 hover:bg-muted/20 transition-colors cursor-pointer"
                 >
                   <span className="w-2.5 h-2.5 bg-orange-400/80 border border-orange-300/60 inline-block" />
@@ -366,7 +380,7 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
           {breachedZones.map((lvl, i) => (
             <div key={i} className="mb-2" ref={(el) => { zoneRefs.current[i] = el; }}>
               <button
-                onClick={() => setExpandedZone(expandedZone === i ? null : i)}
+                onClick={() => handleZoneClick(i)}
                 aria-expanded={expandedZone === i}
                 className="w-full text-left bg-muted/20 px-3 py-2 border border-border/20 hover:border-primary/30 transition-colors cursor-pointer group"
               >
@@ -386,19 +400,19 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
                   <div>
                     <p className="font-pixel text-[11px] text-cyan-400/80 tracking-wider mb-1">ZONE</p>
                     <p className="font-terminal text-sm text-muted-foreground leading-relaxed">
-                      {ZONE_INFO[lvl.zone]}
+                      {ZONE_INFO[lvl.zone] ?? '(no info available)'}
                     </p>
                   </div>
                   <div>
                     <p className="font-pixel text-[11px] text-secondary/80 tracking-wider mb-1">THREAT</p>
                     <p className="font-terminal text-sm text-muted-foreground leading-relaxed">
-                      {ENEMY_INFO[lvl.enemy]}
+                      {ENEMY_INFO[lvl.enemy] ?? '(no info available)'}
                     </p>
                   </div>
                   <div>
                     <p className="font-pixel text-[11px] text-accent/80 tracking-wider mb-1">WEAKNESS</p>
                     <p className="font-terminal text-sm text-muted-foreground">
-                      {WEAPON_INFO[lvl.weakness].name} — {WEAPON_INFO[lvl.weakness].desc}
+                      {WEAPON_INFO[lvl.weakness]?.name ?? '(unknown)'} — {WEAPON_INFO[lvl.weakness]?.desc ?? ''}
                     </p>
                   </div>
                 </div>
@@ -420,11 +434,11 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
                 </div>
                 <p className="font-pixel text-[11px] text-destructive/60 tracking-wider mb-1">WHAT STOPPED YOU</p>
                 <p className="font-terminal text-sm text-muted-foreground leading-relaxed">
-                  {ENEMY_INFO[failedZone.enemy]}
+                  {ENEMY_INFO[failedZone.enemy] ?? '(no info available)'}
                 </p>
                 <p className="font-pixel text-[11px] text-accent/70 tracking-wider mt-2 mb-1">TIP</p>
                 <p className="font-terminal text-sm text-accent/80">
-                  This threat is weak to {WEAPON_INFO[failedZone.weakness].name}. {WEAPON_INFO[failedZone.weakness].desc}
+                  This threat is weak to {WEAPON_INFO[failedZone.weakness]?.name ?? '(unknown)'}. {WEAPON_INFO[failedZone.weakness]?.desc ?? ''}
                 </p>
               </div>
             </div>
@@ -447,12 +461,14 @@ export default function EndScreen({ state, playAgain, goToMenu }: EndScreenProps
         <div className="flex gap-2 sm:gap-3 pb-4">
           <button
             onClick={goToMenu}
+            aria-label="Return to main menu"
             className="flex-1 h-11 sm:h-14 bg-secondary/20 text-secondary pixel-btn tracking-widest border-secondary/40"
           >
             MENU
           </button>
           <button
             onClick={playAgain}
+            aria-label="Play again"
             className={`flex-1 h-11 sm:h-14 bg-primary/20 text-primary pixel-btn tracking-widest border-primary/40 ${state.victory ? 'attack-btn-pulse' : ''}`}
           >
             AGAIN

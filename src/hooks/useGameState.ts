@@ -279,8 +279,9 @@ function gameReducer(state: GameState, action: Action): GameState {
         const healedHP = Math.min(state.playerMaxHP, state.playerHP + loot.healAmount);
         const newShield = state.shield + loot.shieldGain;
 
+        const actualHeal = healedHP - state.playerHP;
         const lootMessages: string[] = [];
-        lootMessages.push(`+${loot.healAmount} HP restored`);
+        lootMessages.push(`+${actualHeal} HP restored`);
         if (loot.nmapGain > 0) lootMessages.push(`+${loot.nmapGain} Nmap ammo`);
         if (loot.metaGain > 0) lootMessages.push(`+${loot.metaGain} Metasploit ammo`);
         if (loot.shieldGain > 0) lootMessages.push(`+${loot.shieldGain} Shield`);
@@ -332,7 +333,7 @@ function gameReducer(state: GameState, action: Action): GameState {
 
       // Player dies
       if (newPlayerHP <= 0) {
-        updateAfterGame(state.level, state.kills);
+        updateAfterGame(state.level, state.kills, newTotalTurns);
         return {
           ...state,
           phase: "end",
@@ -356,6 +357,7 @@ function gameReducer(state: GameState, action: Action): GameState {
           damageDealtTrigger: state.damageDealtTrigger + 1,
           damageTakenTrigger: eTurn.hpDamage > 0 ? state.damageTakenTrigger + 1 : state.damageTakenTrigger,
           screenShake: true,
+          zoneCrits: [...state.zoneCrits, hitWeakness],
           usedWeaknessThisZone: hitWeakness,
         };
       }
@@ -476,6 +478,8 @@ function gameReducer(state: GameState, action: Action): GameState {
           responses.push(entry(`[INFO] ${WEAPON_INFO.nmap.fullName}: ${WEAPON_INFO.nmap.desc}`, { isResponse: true }));
         } else if (topic === "metasploit" || topic === "msploit" || topic === "meta") {
           responses.push(entry(`[INFO] ${WEAPON_INFO.meta.fullName}: ${WEAPON_INFO.meta.desc}`, { isResponse: true }));
+        } else if (!topic) {
+          responses.push(entry(`[ERR] Usage: info <topic>`, { isResponse: true }));
         } else {
           // Try enemy names
           const enemyMatch = Object.keys(ENEMY_INFO).find(e => e.toLowerCase() === topic || e.toLowerCase().includes(topic));

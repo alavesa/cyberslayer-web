@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useGameState } from "@/hooks/useGameState";
 import { loadSave } from "@/lib/saveData";
 import { getRank, DIFFICULTY_MODS, type Difficulty } from "@/lib/gameEngine";
@@ -6,6 +6,9 @@ import BattleScreen from "@/components/BattleScreen";
 import EndScreen from "@/components/EndScreen";
 import MuteButton from "@/components/MuteButton";
 import ScaledArt from "@/components/ScaledArt";
+
+const DEFAULT_SAVE = { highLevel: 0, kills: 0, games: 0, bestTurns: 0 };
+
 const TAGLINES = [
   "THE NETWORK IS COMPROMISED — YOU'RE THE CURE",
   "ROGUE PACKETS DETECTED — INITIATE COUNTERMEASURES",
@@ -32,15 +35,47 @@ const OPERATOR_FRAMES = [
 ];
 
 function IntroScreen({ onStart }: { onStart: (difficulty: Difficulty) => void }) {
-  const save = loadSave();
-  const rank = getRank(save.highLevel);
+  const save = useMemo(() => {
+    try {
+      return loadSave() ?? DEFAULT_SAVE;
+    } catch {
+      return DEFAULT_SAVE;
+    }
+  }, []);
+  const rank = useMemo(() => getRank(save.highLevel), [save.highLevel]);
   const [difficulty, setDifficulty] = useState<Difficulty>("normal");
-  const [tagline] = useState(() => TAGLINES[Math.floor(Math.random() * TAGLINES.length)]);
+  const tagline = useMemo(() => TAGLINES[Math.floor(Math.random() * TAGLINES.length)], []);
   const [artFrame, setArtFrame] = useState(0);
 
   useEffect(() => {
-    const timer = setInterval(() => setArtFrame((f) => (f + 1) % 2), 800);
-    return () => clearInterval(timer);
+    let timer: ReturnType<typeof setInterval> | null = null;
+
+    const start = () => {
+      timer = setInterval(() => setArtFrame((f) => (f + 1) % 2), 800);
+    };
+
+    const stop = () => {
+      if (timer !== null) {
+        clearInterval(timer);
+        timer = null;
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        stop();
+      } else {
+        start();
+      }
+    };
+
+    start();
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      stop();
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
   }, []);
 
   return (
@@ -177,5 +212,7 @@ export default function Index() {
       return <BattleScreen state={state} attack={attack} enterZone={enterZone} goToMenu={goToMenu} runCommand={runCommand} />;
     case "end":
       return <EndScreen state={state} playAgain={playAgain} goToMenu={goToMenu} />;
+    default:
+      return null;
   }
 }
