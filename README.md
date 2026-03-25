@@ -1,5 +1,7 @@
 # CyberSlayer
 
+[![Reviewed by PatchPilots](https://img.shields.io/badge/reviewed%20by-PatchPilots-blue)](https://github.com/alavesa/patchpilots)
+
 A turn-based cybersecurity combat game built for the browser. Breach 10 corporate network zones, exploit enemy weaknesses, and secure the network. Inspired by the badge game https://github.com/alavesa/cyberslayer
 
 **Play now: [https://cyberslayer.win/](https://cyberslayer.win/)**
